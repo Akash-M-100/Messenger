@@ -1,0 +1,11 @@
+{
+  "code-runner.runInTerminal": true,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.formatOnSave": true
+  },
+  "code-runner.executorMap": {
+    "prisma": "npx prisma validate --schema \"$file\""
+},
+"prisma.pinToPrisma6": true
+}

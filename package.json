@@ -1,0 +1,19 @@
+{
+  "name": "unified-messaging-service",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "pnpm --filter @ums/api-gateway dev",
+    "dev:watch": "turbo run dev --parallel",
+    "start": "pnpm --filter @ums/api-gateway start",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "pnpm": "9.15.4",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  }
+}

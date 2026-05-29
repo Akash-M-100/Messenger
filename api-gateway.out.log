@@ -1,0 +1,18 @@
+
+> unified-messaging-service@0.1.0 start C:\Users\HP\OneDrive\Desktop\Documents\Messenger
+> pnpm --filter @ums/api-gateway start
+
+
+> @ums/api-gateway@0.1.0 start C:\Users\HP\OneDrive\Desktop\Documents\Messenger\apps\api-gateway
+> node --env-file=../../.env dist/index.js
+
+{"level":30,"time":1780039084490,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1780039084490,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","msg":"Server listening at http://192.168.0.103:3000"}
+{"level":30,"time":1780039094413,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-1","req":{"method":"GET","url":"/healthz","host":"127.0.0.1:3000","remoteAddress":"127.0.0.1","remotePort":56597},"msg":"incoming request"}
+{"level":30,"time":1780039094427,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-1","res":{"statusCode":200},"responseTime":13.708199999760836,"msg":"request completed"}
+{"level":30,"time":1780039278718,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-2","req":{"method":"GET","url":"/health","host":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":64826},"msg":"incoming request"}
+{"level":30,"time":1780039278719,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-2","msg":"Route GET:/health not found"}
+{"level":30,"time":1780039278720,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-2","res":{"statusCode":404},"responseTime":1.27019999967888,"msg":"request completed"}
+{"level":30,"time":1780039278725,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-3","req":{"method":"POST","url":"/messages","host":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":64826},"msg":"incoming request"}
+{"level":30,"time":1780039278727,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-3","msg":"Route POST:/messages not found"}
+{"level":30,"time":1780039278728,"pid":6184,"hostname":"LAPTOP-VIVM9GC7","reqId":"req-3","res":{"statusCode":404},"responseTime":2.918499999679625,"msg":"request completed"}
