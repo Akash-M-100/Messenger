@@ -1,5 +1,5 @@
 import { Queue, QueueEvents } from "bullmq";
-import Redis from "ioredis";
+import type Redis from "ioredis";
 import {
   QUEUE_NAMES,
   DLQ_NAMES,
@@ -36,8 +36,8 @@ export class QueueManager {
         defaultJobOptions: {
           attempts: RETRY_DELAYS.length,
           backoff: {
-            type: "fixed",
-            delay: RETRY_DELAYS[0], // Will be overridden by custom backoff
+            type: "fixed" as const,
+            delay: RETRY_DELAYS[0] ?? 60000,
           },
           removeOnComplete: {
             age: 3600, // Keep completed jobs for 1 hour

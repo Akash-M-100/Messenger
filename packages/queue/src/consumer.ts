@@ -1,5 +1,5 @@
 import { Worker, type Job } from "bullmq";
-import Redis from "ioredis";
+import type Redis from "ioredis";
 import { QUEUE_NAMES, RETRY_DELAYS, type Channel, type MessageJobData, type JobResult } from "./types.js";
 
 export interface ConsumerConfig {
@@ -126,7 +126,7 @@ export abstract class BaseConsumer {
     channel: Channel;
   }> {
     const isPaused = await this.worker.isPaused();
-    const concurrency = this.worker.opts.concurrency ?? 50;
+    const concurrency = (this.worker.opts.concurrency as number) ?? 50;
 
     return {
       paused: isPaused,

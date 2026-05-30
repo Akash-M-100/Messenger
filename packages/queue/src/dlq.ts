@@ -1,5 +1,5 @@
 import { Queue } from "bullmq";
-import Redis from "ioredis";
+import type Redis from "ioredis";
 import { DLQ_NAMES, type Channel, type MessageJobData } from "./types.js";
 
 export interface DLQConfig {
@@ -50,23 +50,22 @@ export class DeadLetterQueue {
   ): Promise<string> {
     const dlq = this.getDLQ(channel);
 
+    const jobWithMetadata: MessageJobData & { failed_reason: string; failed_code?: string; failed_at: string } = {
+      ...jobData,
+      failed_reason: failureReason,
+      failed_code: failureCode,
+      failed_at: new Date().toISOString(),
+    };
+
     const job = await dlq.add(
       `failed-${jobData.message_id}`,
-      {
-        ...jobData,
-      },
+      jobWithMetadata as MessageJobData,
       {
         jobId: `failed-${jobData.message_id}`,
-        data: {
-          ...jobData,
-          failed_reason: failureReason,
-          failed_code: failureCode,
-          failed_at: new Date().toISOString(),
-        },
       },
     );
 
-    return job.id;
+    return job.id ?? "";
   }
 
   /**
@@ -86,7 +85,7 @@ export class DeadLetterQueue {
     end: number = -1,
   ): Promise<MessageJobData[]> {
     const dlq = this.getDLQ(channel);
-    const jobs = await dlq.getJobs(["failed", "completed"], start, end);
+    const jobs = await dlq.getJobs(["failed", "completed"] as const, start, end);
     return jobs.map((job) => job.data);
   }
 
