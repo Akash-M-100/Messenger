@@ -9,6 +9,9 @@
     },
     {
       "path": "./apps/api-gateway"
+    },
+    {
+      "path": "./apps/webhook-receiver"
     }
   ],
   "compilerOptions": {
