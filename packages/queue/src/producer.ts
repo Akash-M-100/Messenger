@@ -47,7 +47,7 @@ export class MessageProducer {
       },
     );
 
-    return job.id;
+    return job.id ?? messageId;
   }
 
   async enqueueBulkMessages(
