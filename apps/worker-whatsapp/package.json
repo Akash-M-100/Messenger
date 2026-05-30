@@ -1,0 +1,24 @@
+{
+  "name": "@ums/worker-whatsapp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -b --pretty false",
+    "clean": "tsc -b --clean"
+  },
+  "dependencies": {
+    "@ums/core": "workspace:*",
+    "@ums/db": "workspace:*",
+    "@ums/queue": "workspace:*",
+    "prisma": "^5.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.24",
+    "typescript": "^5.7.2"
+  }
+}
