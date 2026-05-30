@@ -27,7 +27,7 @@ export class MessageProducer {
       channel,
       priority,
       created_at: new Date().toISOString(),
-      ...(idempotencyKey && { idempotency_key: idempotencyKey }),
+      idempotency_key: idempotencyKey,
     };
 
     const job = await queue.add(
@@ -39,15 +39,15 @@ export class MessageProducer {
           type: "custom",
         },
         priority: PRIORITY_MAP[priority],
-        jobId: messageId,
+        jobId: messageId, // Use message ID as job ID for deduplication
         removeOnComplete: {
-          age: 3600,
+          age: 3600, // Keep completed jobs for 1 hour for audit
         },
-        removeOnFail: false,
+        removeOnFail: false, // Keep failed jobs for DLQ processing
       },
     );
 
-    return job.id ?? "";
+    return job.id ?? messageId;
   }
 
   async enqueueBulkMessages(

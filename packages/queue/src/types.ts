@@ -8,7 +8,7 @@ export interface MessageJobData {
   channel: Channel;
   priority: Priority;
   created_at: string;
-  idempotency_key?: string | null;
+  idempotency_key?: string | undefined;
 }
 
 export interface JobResult {

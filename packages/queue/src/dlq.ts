@@ -1,14 +1,14 @@
 import { Queue } from "bullmq";
-import type Redis from "ioredis";
 import { DLQ_NAMES, type Channel, type MessageJobData } from "./types.js";
+import type { RedisInstance } from "./redis.js";
 
 export interface DLQConfig {
-  redis: Redis;
+  redis: RedisInstance;
 }
 
 export class DeadLetterQueue {
   private dlqs: Map<Channel, Queue<MessageJobData>> = new Map();
-  private redis: Redis;
+  private redis: RedisInstance;
 
   constructor(config: DLQConfig) {
     this.redis = config.redis;
@@ -50,7 +50,7 @@ export class DeadLetterQueue {
   ): Promise<string> {
     const dlq = this.getDLQ(channel);
 
-    const jobWithMetadata: MessageJobData & { failed_reason: string; failed_code?: string; failed_at: string } = {
+    const jobDataWithMetadata = {
       ...jobData,
       failed_reason: failureReason,
       failed_code: failureCode,
@@ -59,13 +59,13 @@ export class DeadLetterQueue {
 
     const job = await dlq.add(
       `failed-${jobData.message_id}`,
-      jobWithMetadata as MessageJobData,
+      jobDataWithMetadata as MessageJobData,
       {
         jobId: `failed-${jobData.message_id}`,
       },
     );
 
-    return job.id ?? "";
+    return job.id ?? `failed-${jobData.message_id}`;
   }
 
   /**
@@ -85,7 +85,7 @@ export class DeadLetterQueue {
     end: number = -1,
   ): Promise<MessageJobData[]> {
     const dlq = this.getDLQ(channel);
-    const jobs = await dlq.getJobs(["failed", "completed"] as const, start, end);
+    const jobs = await dlq.getJobs(["failed", "completed"], start, end);
     return jobs.map((job) => job.data);
   }
 
@@ -94,7 +94,8 @@ export class DeadLetterQueue {
    */
   async clearDLQ(channel: Channel): Promise<number> {
     const dlq = this.getDLQ(channel);
-    return dlq.clean(0, 0, "failed");
+    const cleaned = await dlq.clean(0, 0, "failed");
+    return cleaned.length;
   }
 
   /**
@@ -108,7 +109,7 @@ export class DeadLetterQueue {
 }
 
 export async function createDeadLetterQueue(
-  redis: Redis,
+  redis: RedisInstance,
 ): Promise<DeadLetterQueue> {
   return new DeadLetterQueue({
     redis,

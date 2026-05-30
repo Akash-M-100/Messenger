@@ -1,5 +1,4 @@
 import { Queue, QueueEvents } from "bullmq";
-import type Redis from "ioredis";
 import {
   QUEUE_NAMES,
   DLQ_NAMES,
@@ -8,9 +7,10 @@ import {
   type Channel,
   type MessageJobData,
 } from "./types.js";
+import type { RedisInstance } from "./redis.js";
 
 export interface QueueConfig {
-  redis: Redis;
+  redis: RedisInstance;
   defaultJobOptions?: {
     removeOnComplete?: boolean;
     removeOnFail?: boolean;
@@ -20,7 +20,7 @@ export interface QueueConfig {
 export class QueueManager {
   private queues: Map<Channel, Queue<MessageJobData>> = new Map();
   private queueEvents: Map<Channel, QueueEvents> = new Map();
-  private redis: Redis;
+  private redis: RedisInstance;
 
   constructor(config: QueueConfig) {
     this.redis = config.redis;
@@ -36,8 +36,8 @@ export class QueueManager {
         defaultJobOptions: {
           attempts: RETRY_DELAYS.length,
           backoff: {
-            type: "fixed" as const,
-            delay: RETRY_DELAYS[0] ?? 60000,
+            type: "fixed",
+            delay: RETRY_DELAYS[0] ?? 60000, // Will be overridden by custom backoff
           },
           removeOnComplete: {
             age: 3600, // Keep completed jobs for 1 hour
@@ -90,7 +90,7 @@ export class QueueManager {
 }
 
 export async function createQueueManager(
-  redis: Redis,
+  redis: RedisInstance,
 ): Promise<QueueManager> {
   return new QueueManager({
     redis,
