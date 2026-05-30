@@ -1,9 +1,9 @@
 import { Worker, type Job } from "bullmq";
-import Redis from "ioredis";
 import { QUEUE_NAMES, RETRY_DELAYS, type Channel, type MessageJobData, type JobResult } from "./types.js";
+import type { RedisInstance } from "./redis.js";
 
 export interface ConsumerConfig {
-  connection: Redis;
+  connection: RedisInstance;
   channel: Channel;
   concurrency?: number;
   removeOnComplete?: boolean;
@@ -12,7 +12,7 @@ export interface ConsumerConfig {
 export abstract class BaseConsumer {
   protected worker: Worker<MessageJobData, JobResult>;
   protected channel: Channel;
-  protected connection: Redis;
+  protected connection: RedisInstance;
 
   constructor(config: ConsumerConfig) {
     this.channel = config.channel;
@@ -93,7 +93,7 @@ export abstract class BaseConsumer {
    */
   protected getRetryDelay(attemptNumber: number): number {
     const delayIndex = Math.min(attemptNumber - 1, RETRY_DELAYS.length - 1);
-    return RETRY_DELAYS[delayIndex];
+    return RETRY_DELAYS[delayIndex] ?? 1 * 60 * 1000;
   }
 
   /**
@@ -126,7 +126,7 @@ export abstract class BaseConsumer {
     channel: Channel;
   }> {
     const isPaused = await this.worker.isPaused();
-    const concurrency = this.worker.opts.concurrency ?? 50;
+    const concurrency = (this.worker.opts.concurrency ?? 50) as number;
 
     return {
       paused: isPaused,

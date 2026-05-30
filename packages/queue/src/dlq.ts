@@ -1,14 +1,14 @@
 import { Queue } from "bullmq";
-import Redis from "ioredis";
 import { DLQ_NAMES, type Channel, type MessageJobData } from "./types.js";
+import type { RedisInstance } from "./redis.js";
 
 export interface DLQConfig {
-  redis: Redis;
+  redis: RedisInstance;
 }
 
 export class DeadLetterQueue {
   private dlqs: Map<Channel, Queue<MessageJobData>> = new Map();
-  private redis: Redis;
+  private redis: RedisInstance;
 
   constructor(config: DLQConfig) {
     this.redis = config.redis;
@@ -50,23 +50,22 @@ export class DeadLetterQueue {
   ): Promise<string> {
     const dlq = this.getDLQ(channel);
 
+    const jobDataWithMetadata = {
+      ...jobData,
+      failed_reason: failureReason,
+      failed_code: failureCode,
+      failed_at: new Date().toISOString(),
+    };
+
     const job = await dlq.add(
       `failed-${jobData.message_id}`,
-      {
-        ...jobData,
-      },
+      jobDataWithMetadata as MessageJobData,
       {
         jobId: `failed-${jobData.message_id}`,
-        data: {
-          ...jobData,
-          failed_reason: failureReason,
-          failed_code: failureCode,
-          failed_at: new Date().toISOString(),
-        },
       },
     );
 
-    return job.id;
+    return job.id ?? `failed-${jobData.message_id}`;
   }
 
   /**
@@ -95,7 +94,8 @@ export class DeadLetterQueue {
    */
   async clearDLQ(channel: Channel): Promise<number> {
     const dlq = this.getDLQ(channel);
-    return dlq.clean(0, 0, "failed");
+    const cleaned = await dlq.clean(0, 0, "failed");
+    return cleaned.length;
   }
 
   /**
@@ -109,7 +109,7 @@ export class DeadLetterQueue {
 }
 
 export async function createDeadLetterQueue(
-  redis: Redis,
+  redis: RedisInstance,
 ): Promise<DeadLetterQueue> {
   return new DeadLetterQueue({
     redis,
