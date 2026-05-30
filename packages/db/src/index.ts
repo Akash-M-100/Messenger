@@ -4,12 +4,15 @@ export type {
   ApiKey,
   Message,
   Tenant,
+  MessageEvent,
+  WebhookSubscription,
 } from "@prisma/client";
 export {
   ApiKeyStatus,
   MessageChannel,
   MessageDirection,
   MessageStatus,
+  WebhookEventType,
   Prisma,
   PrismaClient,
   TenantStatus,

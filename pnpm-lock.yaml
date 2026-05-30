@@ -34,6 +34,22 @@ importers:
         specifier: ^22.15.24
         version: 22.19.19
 
+  apps/webhook-receiver:
+    dependencies:
+      '@ums/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      fastify:
+        specifier: ^5.3.3
+        version: 5.8.5
+      zod:
+        specifier: ^3.25.36
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.15.24
+        version: 22.19.19
+
   packages/core: {}
 
   packages/db:
