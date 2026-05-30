@@ -23,8 +23,7 @@ enum MessageChannel {
   SMS
   EMAIL
   WHATSAPP
-  PUSH
-  IN_APP
+  VOICE
 }
 
 enum MessageDirection {
@@ -33,12 +32,26 @@ enum MessageDirection {
 }
 
 enum MessageStatus {
-  ACCEPTED
-  SCHEDULED
-  SENT
+  QUEUED
+  DISPATCHED
   DELIVERED
   FAILED
+  SCHEDULED
   CANCELED
+}
+
+enum TemplateStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum ProviderType {
+  SMS
+  EMAIL
+  WHATSAPP
+  VOICE
 }
 
 model Tenant {
@@ -51,8 +64,10 @@ model Tenant {
   updatedAt DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime?    @map("deleted_at") @db.Timestamptz(6)
 
-  apiKeys  ApiKey[]
-  messages Message[]
+  apiKeys              ApiKey[]
+  messages             Message[]
+  templates            Template[]
+  providerIntegrations ProviderIntegration[]
 
   @@index([status, createdAt])
   @@index([deletedAt])
@@ -89,7 +104,7 @@ model Message {
   externalId     String?          @map("external_id") @db.VarChar(160)
   channel        MessageChannel
   direction      MessageDirection
-  status         MessageStatus    @default(ACCEPTED)
+  status         MessageStatus    @default(QUEUED)
   fromAddress    String?          @map("from_address") @db.VarChar(320)
   toAddress      String           @map("to_address") @db.VarChar(320)
   subject        String?          @db.VarChar(998)
@@ -116,4 +131,66 @@ model Message {
   @@index([scheduledAt])
   @@index([createdAt])
   @@map("messages")
+}
+
+model Provider {
+  id          String       @id @default(cuid())
+  providerId  String       @unique @db.VarChar(80) // e.g., "msg91", "meta_cloud", "resend"
+  type        ProviderType
+  name        String       @db.VarChar(160)
+  description String?      @db.Text
+  baseUrl     String?      @db.VarChar(500)
+  isActive    Boolean      @default(true)
+  config      Json? // Store provider-specific configuration
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  integrations ProviderIntegration[]
+
+  @@index([type, isActive])
+  @@map("providers")
+}
+
+model ProviderIntegration {
+  id         String         @id @default(cuid())
+  tenantId   String         @map("tenant_id")
+  providerId String         @map("provider_id")
+  channel    MessageChannel
+  apiKey     String         @map("api_key") @db.VarChar(500) // Encrypted
+  apiSecret  String?        @map("api_secret") @db.VarChar(500) // Encrypted
+  config     Json? // Provider-specific configuration for this tenant
+  isActive   Boolean        @default(true)
+  priority   Int            @default(0) // Higher priority = preferred for this channel
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([tenantId, providerId, channel])
+  @@index([tenantId, channel, isActive])
+  @@index([providerId, isActive])
+  @@map("provider_integrations")
+}
+
+model Template {
+  id        String         @id @default(cuid())
+  tenantId  String         @map("tenant_id")
+  channel   MessageChannel
+  language  String         @default("en") @db.VarChar(20)
+  name      String         @db.VarChar(160)
+  body      String         @db.Text
+  subject   String?        @db.VarChar(998) // For email
+  variables Json? // List of template variables
+  status    TemplateStatus @default(DRAFT)
+  version   Int            @default(1)
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([tenantId, channel, name, language])
+  @@index([tenantId, channel, status])
+  @@index([tenantId, createdAt])
+  @@map("templates")
 }
