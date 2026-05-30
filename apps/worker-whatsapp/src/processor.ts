@@ -20,8 +20,6 @@ export async function processMessage(
       data: { status: "DISPATCHED" },
     });
 
-
-
     // Send via provider
     const result = await provider.send({
       channel: message.channel.toLowerCase() as any,
@@ -42,11 +40,15 @@ export async function processMessage(
       },
     });
 
-    return { success: true, provider_message_id: result.message_id };
+    return {
+      success: true,
+      provider_message_id: result.message_id,
+    };
   } catch (error) {
-    // Log failed event
+    console.error("Error processing message:", error);
+
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    
+
     await prisma.message.update({
       where: { id: job.data.message_id },
       data: {

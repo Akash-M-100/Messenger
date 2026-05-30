@@ -2,7 +2,7 @@ import { createRedisConnection, createQueueManager, BaseConsumer, type Channel, 
 import { PrismaClient } from "@ums/db";
 import type { Job } from "bullmq";
 import { MockWhatsAppProvider } from "./mock-provider.js";
-import { processMessage } from "../../../apps/worker-sms/src/processor.js";
+import { processMessage } from "./processor.js";
 
 const channel: Channel = "whatsapp";
 const prisma = new PrismaClient();
