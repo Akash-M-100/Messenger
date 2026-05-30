@@ -79,7 +79,6 @@ enum AuditActionType {
   REJECT
   SUBMIT
 }
-
 model Tenant {
   id        String       @id @default(cuid())
   name      String       @db.VarChar(160)
@@ -148,6 +147,7 @@ model Message {
   updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  events MessageEvent[]
 
   @@unique([tenantId, idempotencyKey])
   @@unique([tenantId, externalId])
@@ -201,6 +201,8 @@ model MessageEvent {
   rawPayload      Json                @map("raw_payload")
   createdAt       DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
 
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   @@index([tenantId, createdAt])
   @@index([messageId, createdAt])
   @@index([eventType, createdAt])
@@ -227,14 +229,14 @@ model ProviderConfig {
 }
 
 model WebhookSubscription {
-  id              String         @id @default(cuid())
-  tenantId        String         @map("tenant_id")
-  url             String         @db.VarChar(1024)
-  events          String[]       @default(["MESSAGE_SENT", "MESSAGE_DELIVERED", "MESSAGE_FAILED"])
-  active          Boolean        @default(true)
-  secret          String         @db.VarChar(256)
-  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  url       String   @db.VarChar(1024)
+  events    String[] @default(["MESSAGE_SENT", "MESSAGE_DELIVERED", "MESSAGE_FAILED"])
+  active    Boolean  @default(true)
+  secret    String   @db.VarChar(256)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
