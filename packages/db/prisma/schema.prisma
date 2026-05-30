@@ -41,6 +41,45 @@ enum MessageStatus {
   CANCELED
 }
 
+enum TemplateStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  PAUSED
+  ARCHIVED
+}
+
+enum TemplateType {
+  TEXT
+  PROMOTIONAL
+  TRANSACTIONAL
+  OTP
+}
+
+enum WebhookEventType {
+  MESSAGE_SENT
+  MESSAGE_DELIVERED
+  MESSAGE_FAILED
+}
+
+enum ProviderType {
+  SMS
+  EMAIL
+  WHATSAPP
+  PUSH
+}
+
+enum AuditActionType {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  APPROVE
+  REJECT
+  SUBMIT
+}
+
 model Tenant {
   id        String       @id @default(cuid())
   name      String       @db.VarChar(160)
@@ -51,8 +90,11 @@ model Tenant {
   updatedAt DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime?    @map("deleted_at") @db.Timestamptz(6)
 
-  apiKeys  ApiKey[]
-  messages Message[]
+  apiKeys               ApiKey[]
+  messages              Message[]
+  templates             Template[]
+  providerConfigs       ProviderConfig[]
+  webhookSubscriptions  WebhookSubscription[]
 
   @@index([status, createdAt])
   @@index([deletedAt])
@@ -116,4 +158,107 @@ model Message {
   @@index([scheduledAt])
   @@index([createdAt])
   @@map("messages")
+}
+
+model Template {
+  id              String         @id @default(cuid())
+  tenantId        String         @map("tenant_id")
+  name            String         @db.VarChar(160)
+  channel         MessageChannel
+  type            TemplateType   @default(TEXT)
+  status          TemplateStatus @default(DRAFT)
+  content         String
+  variables       String[]       @default([])
+  dltEntityId     String?        @map("dlt_entity_id") @db.VarChar(80)
+  dltTemplateId   String?        @map("dlt_template_id") @db.VarChar(80)
+  approvalStatus  String?        @map("approval_status") @db.VarChar(80)
+  approvalReason  String?        @map("approval_reason")
+  metadata        Json?
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  submittedAt     DateTime?      @map("submitted_at") @db.Timestamptz(6)
+  approvedAt      DateTime?      @map("approved_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([tenantId, name, channel])
+  @@index([tenantId, status])
+  @@index([tenantId, channel])
+  @@index([tenantId, createdAt])
+  @@index([status, createdAt])
+  @@map("templates")
+}
+
+model MessageEvent {
+  id              String              @id @default(cuid())
+  messageId       String              @map("message_id")
+  tenantId        String              @map("tenant_id")
+  eventType       WebhookEventType    @map("event_type")
+  previousStatus  MessageStatus?      @map("previous_status")
+  newStatus       MessageStatus       @map("new_status")
+  externalId      String?             @map("external_id") @db.VarChar(160)
+  providerName    String              @map("provider_name") @db.VarChar(80)
+  rawPayload      Json                @map("raw_payload")
+  createdAt       DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([tenantId, createdAt])
+  @@index([messageId, createdAt])
+  @@index([eventType, createdAt])
+  @@map("message_events")
+}
+
+model ProviderConfig {
+  id              String        @id @default(cuid())
+  tenantId        String        @map("tenant_id")
+  type            ProviderType
+  name            String        @db.VarChar(160)
+  config          Json
+  isActive        Boolean       @default(true) @map("is_active")
+  metadata        Json?
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([tenantId, type, name])
+  @@index([tenantId, type])
+  @@index([tenantId, isActive])
+  @@map("provider_configs")
+}
+
+model WebhookSubscription {
+  id              String         @id @default(cuid())
+  tenantId        String         @map("tenant_id")
+  url             String         @db.VarChar(1024)
+  events          String[]       @default(["MESSAGE_SENT", "MESSAGE_DELIVERED", "MESSAGE_FAILED"])
+  active          Boolean        @default(true)
+  secret          String         @db.VarChar(256)
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([tenantId, active])
+  @@index([createdAt])
+  @@map("webhook_subscriptions")
+}
+
+model AuditLog {
+  id              String              @id @default(cuid())
+  tenantId        String?             @map("tenant_id")
+  actionType      AuditActionType     @map("action_type")
+  resourceType    String              @map("resource_type") @db.VarChar(80)
+  resourceId      String              @map("resource_id") @db.VarChar(160)
+  changes         Json?
+  metadata        Json?
+  adminId         String?             @map("admin_id") @db.VarChar(160)
+  ipAddress       String?             @map("ip_address") @db.VarChar(45)
+  userAgent       String?             @map("user_agent") @db.VarChar(500)
+  createdAt       DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([tenantId, createdAt])
+  @@index([resourceType, resourceId])
+  @@index([actionType, createdAt])
+  @@index([adminId, createdAt])
+  @@map("audit_logs")
 }
