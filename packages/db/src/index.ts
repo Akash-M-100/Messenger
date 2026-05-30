@@ -6,6 +6,9 @@ export type {
   Tenant,
   MessageEvent,
   WebhookSubscription,
+  Template,
+  ProviderConfig,
+  AuditLog,
 } from "@prisma/client";
 export {
   ApiKeyStatus,
@@ -13,6 +16,10 @@ export {
   MessageDirection,
   MessageStatus,
   WebhookEventType,
+  TemplateStatus,
+  TemplateType,
+  ProviderType,
+  AuditActionType,
   Prisma,
   PrismaClient,
   TenantStatus,
