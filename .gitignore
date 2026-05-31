@@ -6,3 +6,6 @@ tsconfig.tsbuildinfo
 *.d.ts.map
 *.js
 *.js.map
+.env
+.env.local
+.env.*.local

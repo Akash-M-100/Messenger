@@ -76,3 +76,53 @@ function withIdempotencyKey(
     idempotencyKey: result.data,
   };
 }
+
+server.get("/messages", async (request, reply) => {
+  const apiKey = getApiKey(request);
+  if (!apiKey) {
+    throw new UnauthorizedError("Missing API key");
+  }
+
+  const authContext = await server.services.apiKeys.verifyApiKey(apiKey);
+  const messages = await server.services.messages.listMessages(authContext);
+
+  return reply.code(200).send({
+    data: messages,
+  });
+});
+
+server.get("/messages/:id", async (request, reply) => {
+  const apiKey = getApiKey(request);
+  if (!apiKey) {
+    throw new UnauthorizedError("Missing API key");
+  }
+
+  const { id } = request.params as { id: string };
+  if (!id) {
+    throw new ValidationError("Message ID is required");
+  }
+
+  const authContext = await server.services.apiKeys.verifyApiKey(apiKey);
+  const message = await server.services.messages.getMessage(authContext, id);
+
+  return reply.code(200).send({
+    data: message,
+  });
+});
+
+server.delete("/messages/:id", async (request, reply) => {
+  const apiKey = getApiKey(request);
+  if (!apiKey) {
+    throw new UnauthorizedError("Missing API key");
+  }
+
+  const { id } = request.params as { id: string };
+  if (!id) {
+    throw new ValidationError("Message ID is required");
+  }
+
+  const authContext = await server.services.apiKeys.verifyApiKey(apiKey);
+  await server.services.messages.cancelMessage(authContext, id);
+
+  return reply.code(204).send();
+});

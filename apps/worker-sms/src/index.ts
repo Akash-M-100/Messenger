@@ -2,6 +2,7 @@ import { createRedisConnection, createQueueManager, BaseConsumer, type Channel, 
 import { PrismaClient } from "@ums/db";
 import type { Job } from "bullmq";
 import { MockSMSProvider } from "./mock-provider.js";
+import { TwilioSMSProvider } from "./twilio-provider.js";
 import { processMessage } from "./processor.js";
 
 const channel: Channel = "sms";
@@ -13,7 +14,16 @@ const redis = createRedisConnection({
 });
 
 class SMSWorker extends BaseConsumer {
-  private provider = new MockSMSProvider();
+  private provider =
+    process.env.TWILIO_ACCOUNT_SID &&
+    process.env.TWILIO_AUTH_TOKEN &&
+    process.env.TWILIO_PHONE_NUMBER
+      ? new TwilioSMSProvider(
+          process.env.TWILIO_ACCOUNT_SID,
+          process.env.TWILIO_AUTH_TOKEN,
+          process.env.TWILIO_PHONE_NUMBER,
+        )
+      : new MockSMSProvider();
 
   async processJob(job: Job<MessageJobData>): Promise<JobResult> {
     return processMessage(job, this.provider, prisma);
@@ -28,7 +38,9 @@ async function start() {
     concurrency: 10,
   });
 
-  console.log("✓ SMS Worker started");
+  const providerName =
+    process.env.TWILIO_ACCOUNT_SID ? "Twilio" : "Mock";
+  console.log(`✓ SMS Worker started (${providerName})`);
 
   process.on("SIGTERM", async () => {
     console.log("🛑 Shutting down...");

@@ -16,6 +16,12 @@ export interface MessageService {
     authContext: AuthContext,
     request: CreateMessageRequest,
   ): Promise<CreateMessageResponse>;
+  listMessages(authContext: AuthContext): Promise<CreateMessageResponse[]>;
+  getMessage(
+    authContext: AuthContext,
+    messageId: string,
+  ): Promise<CreateMessageResponse>;
+  cancelMessage(authContext: AuthContext, messageId: string): Promise<void>;
 }
 
 export interface MessageServiceDependencies {
@@ -90,6 +96,45 @@ export function createMessageService(
       });
 
       return toCreateMessageResponse(message);
+    },
+    async listMessages(authContext) {
+      const messages = await dependencies.db.message.findMany({
+        where: {
+          tenantId: authContext.tenantId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      return messages.map(toCreateMessageResponse);
+    },
+    async getMessage(authContext, messageId) {
+      const message = await dependencies.db.message.findUniqueOrThrow({
+        where: {
+          id: messageId,
+          tenantId: authContext.tenantId,
+        },
+      });
+
+      return toCreateMessageResponse(message);
+    },
+    async cancelMessage(authContext, messageId) {
+      const message = await dependencies.db.message.findUniqueOrThrow({
+        where: {
+          id: messageId,
+          tenantId: authContext.tenantId,
+        },
+      });
+
+      if (message.status !== MessageStatus.SCHEDULED) {
+        throw new Error("Only scheduled messages can be cancelled");
+      }
+
+      await dependencies.db.message.update({
+        where: { id: messageId },
+        data: { status: MessageStatus.CANCELED },
+      });
     },
   };
 }

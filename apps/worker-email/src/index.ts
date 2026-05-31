@@ -2,6 +2,7 @@ import { createRedisConnection, createQueueManager, BaseConsumer, type Channel, 
 import { PrismaClient } from "@ums/db";
 import type { Job } from "bullmq";
 import { MockEmailProvider } from "./mock-provider.js";
+import { ResendEmailProvider } from "./resend-provider.js";
 import { processMessage } from "./processor.js";
 
 const channel: Channel = "email";
@@ -13,7 +14,10 @@ const redis = createRedisConnection({
 });
 
 class EmailWorker extends BaseConsumer {
-  private provider = new MockEmailProvider();
+  private provider =
+    process.env.RESEND_API_KEY
+      ? new ResendEmailProvider(process.env.RESEND_API_KEY)
+      : new MockEmailProvider();
 
   async processJob(job: Job<MessageJobData>): Promise<JobResult> {
     return processMessage(job, this.provider, prisma);
@@ -28,7 +32,9 @@ async function start() {
     concurrency: 15,
   });
 
-  console.log("✓ Email Worker started");
+  const providerName =
+    process.env.RESEND_API_KEY ? "Resend" : "Mock";
+  console.log(`✓ Email Worker started (${providerName})`);
 
   process.on("SIGTERM", async () => {
     console.log("🛑 Shutting down...");

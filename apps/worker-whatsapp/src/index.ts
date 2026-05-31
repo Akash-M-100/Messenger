@@ -2,6 +2,7 @@ import { createRedisConnection, createQueueManager, BaseConsumer, type Channel, 
 import { PrismaClient } from "@ums/db";
 import type { Job } from "bullmq";
 import { MockWhatsAppProvider } from "./mock-provider.js";
+import { TwilioWhatsAppProvider } from "./twilio-provider.js";
 import { processMessage } from "./processor.js";
 
 const channel: Channel = "whatsapp";
@@ -13,7 +14,16 @@ const redis = createRedisConnection({
 });
 
 class WhatsAppWorker extends BaseConsumer {
-  private provider = new MockWhatsAppProvider();
+  private provider =
+    process.env.TWILIO_ACCOUNT_SID &&
+    process.env.TWILIO_AUTH_TOKEN &&
+    process.env.TWILIO_WHATSAPP_NUMBER
+      ? new TwilioWhatsAppProvider(
+          process.env.TWILIO_ACCOUNT_SID,
+          process.env.TWILIO_AUTH_TOKEN,
+          process.env.TWILIO_WHATSAPP_NUMBER,
+        )
+      : new MockWhatsAppProvider();
 
   async processJob(job: Job<MessageJobData>): Promise<JobResult> {
     return processMessage(job, this.provider, prisma);
@@ -28,7 +38,9 @@ async function start() {
     concurrency: 8,
   });
 
-  console.log("✓ WhatsApp Worker started");
+  const providerName =
+    process.env.TWILIO_ACCOUNT_SID ? "Twilio" : "Mock";
+  console.log(`✓ WhatsApp Worker started (${providerName})`);
 
   process.on("SIGTERM", async () => {
     console.log("🛑 Shutting down...");
