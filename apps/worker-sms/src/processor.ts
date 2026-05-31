@@ -1,5 +1,5 @@
 import { Job } from "bullmq";
-import { PrismaClient } from "@ums/db";
+import { PrismaClient, MessageStatus } from "@ums/db";
 import type { MessageJobData, JobResult } from "@ums/queue";
 import type { IChannelProvider } from "@ums/core";
 
@@ -17,32 +17,36 @@ export async function processMessage(
     // Update to DISPATCHING
     await prisma.message.update({
       where: { id: message.id },
-      data: { status: "DISPATCHED" },
+      data: { status: MessageStatus.SENT },
     });
 
 
 
     // Send via provider
+    const content: Record<string, string> = {};
+    if (message.subject) content.subject = message.subject;
+    if (message.body) content.body = message.body;
+    
     const result = await provider.send({
       channel: message.channel.toLowerCase() as any,
       recipient: {
         phone: message.toAddress,
         email: message.toAddress,
       },
-      content: { body: message.body, subject: message.subject },
-      metadata: message.metadata || {},
+      content,
+      metadata: (message.metadata ?? undefined) as Record<string, unknown>,
     });
 
     // Update to DELIVERED
     await prisma.message.update({
       where: { id: message.id },
       data: {
-        status: "DELIVERED",
+        status: MessageStatus.DELIVERED,
         deliveredAt: new Date(),
       },
     });
 
-    return { success: true, provider_message_id: result.message_id };
+    return { success: true, provider_message_id: result.providerMessageId };
   } catch (error) {
     // Log failed event
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -50,9 +54,9 @@ export async function processMessage(
     await prisma.message.update({
       where: { id: job.data.message_id },
       data: {
-        status: "FAILED",
+        status: MessageStatus.FAILED,
         failedAt: new Date(),
-        errorMessage,
+        errorMessage: errorMessage ?? undefined,
       },
     });
 
