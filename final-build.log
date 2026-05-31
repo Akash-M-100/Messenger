@@ -1,0 +1,54 @@
+
+> unified-messaging-service@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger
+> turbo run build
+
+
+   • Packages in scope: @ums/api-gateway, @ums/core, @ums/db, @ums/queue, @ums/worker-email, @ums/worker-sms, @ums/worker-voice, @ums/worker-whatsapp
+   • Running build in 8 packages
+   • Remote caching disabled
+
+@ums/db:build: cache hit, replaying logs 717a1fd3eb984551
+@ums/db:build: 
+@ums/db:build: > @ums/db@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\packages\db
+@ums/db:build: > tsc -b
+@ums/db:build: 
+@ums/core:build: cache hit, replaying logs 8563c78996e9a770
+@ums/core:build: 
+@ums/core:build: > @ums/core@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\packages\core
+@ums/core:build: > tsc -b
+@ums/core:build: 
+@ums/queue:build: cache hit, replaying logs b506e273b09f7f28
+@ums/queue:build: 
+@ums/queue:build: > @ums/queue@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\packages\queue
+@ums/queue:build: > tsc -b
+@ums/queue:build: 
+@ums/worker-email:build: cache hit, replaying logs 4b675b880d8198ab
+@ums/worker-whatsapp:build: cache hit, replaying logs 2e939e74bd3a2be0
+@ums/worker-email:build: 
+@ums/worker-email:build: > @ums/worker-email@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\apps\worker-email
+@ums/worker-email:build: > tsc -b
+@ums/worker-email:build: 
+@ums/worker-whatsapp:build: 
+@ums/worker-whatsapp:build: > @ums/worker-whatsapp@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\apps\worker-whatsapp
+@ums/worker-whatsapp:build: > tsc -b
+@ums/worker-whatsapp:build: 
+@ums/worker-voice:build: cache hit, replaying logs e7e20d224d4a093f
+@ums/worker-voice:build: 
+@ums/worker-voice:build: > @ums/worker-voice@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\apps\worker-voice
+@ums/worker-voice:build: > tsc -b
+@ums/worker-voice:build: 
+@ums/worker-sms:build: cache hit, replaying logs 459381360f0cd274
+@ums/worker-sms:build: 
+@ums/worker-sms:build: > @ums/worker-sms@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\apps\worker-sms
+@ums/worker-sms:build: > tsc -b
+@ums/worker-sms:build: 
+@ums/api-gateway:build: cache hit, replaying logs ace218cd6a476a97
+@ums/api-gateway:build: 
+@ums/api-gateway:build: > @ums/api-gateway@0.1.0 build C:\Users\desireddysreelakshmi\OneDrive\Desktop\app\Messenger\apps\api-gateway
+@ums/api-gateway:build: > tsc -b
+@ums/api-gateway:build: 
+
+ Tasks:    8 successful, 8 total
+Cached:    8 cached, 8 total
+  Time:    66ms >>> FULL TURBO
+

@@ -41,6 +41,8 @@ export interface SendPayload {
     html?: string;
     media_url?: string;
     voice_script_url?: string;
+    from?: string; // email: sender address
+    replyTo?: string; // email: reply-to address
   };
   templateId?: string; // optional: reference to stored template
   metadata?: Record<string, unknown>;

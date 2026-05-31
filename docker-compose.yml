@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: app-postgres-1
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ums
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: app-redis-1
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  localstack:
+    image: localstack/localstack
+    container_name: app-localstack-1
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=ap-south-1
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
