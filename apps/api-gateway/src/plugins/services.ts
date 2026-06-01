@@ -1,6 +1,8 @@
 import type { FastifyPluginAsync } from "fastify";
 
 import type { DbClient } from "@ums/db";
+import type { RedisInstance } from "@ums/core";
+import { QueueManager } from "@ums/queue";
 
 import {
   createApiKeyService,
@@ -18,6 +20,7 @@ export interface AppServices {
 
 export interface ServicesPluginOptions {
   db: DbClient;
+  redis: RedisInstance;
 }
 
 declare module "fastify" {
@@ -33,8 +36,14 @@ export const registerServicesPlugin: FastifyPluginAsync<
     db: options.db,
   });
 
+  const queueManager = new QueueManager({
+    redis: options.redis,
+  });
+
   const messages = createMessageService({
     db: options.db,
+    redis: options.redis,
+    queueManager,
   });
 
   server.decorate("services", {

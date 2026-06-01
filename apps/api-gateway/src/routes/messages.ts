@@ -1,4 +1,5 @@
-import type { FastifyInstance, FastifyRequest } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
+import type { FastifyRequest } from "fastify";
 
 import { UnauthorizedError, ValidationError } from "../middleware/errors.js";
 import {
@@ -7,9 +8,10 @@ import {
   type CreateMessageRequest,
 } from "../schemas/message.js";
 
-export async function registerMessageRoutes(
-  server: FastifyInstance,
-): Promise<void> {
+export const registerMessageRoutes: FastifyPluginAsync = async (
+  server,
+  options,
+): Promise<void> => {
   server.post("/messages", async (request, reply) => {
     const apiKey = getApiKey(request);
     if (!apiKey) {
@@ -21,8 +23,8 @@ export async function registerMessageRoutes(
       throw new ValidationError("Invalid message request", parsedBody.error);
     }
 
-    const authContext = await server.services.apiKeys.verifyApiKey(apiKey);
-    const message = await server.services.messages.createMessage(
+    const authContext = await request.server.services.apiKeys.verifyApiKey(apiKey);
+    const message = await request.server.services.messages.createMessage(
       authContext,
       withIdempotencyKey(parsedBody.data, request.headers["idempotency-key"]),
     );
@@ -30,6 +32,56 @@ export async function registerMessageRoutes(
     return reply.code(202).send({
       data: message,
     });
+  });
+
+  server.get("/messages", async (request, reply) => {
+    const apiKey = getApiKey(request);
+    if (!apiKey) {
+      throw new UnauthorizedError("Missing API key");
+    }
+
+    const authContext = await request.server.services.apiKeys.verifyApiKey(apiKey);
+    const messages = await request.server.services.messages.listMessages(authContext);
+
+    return reply.code(200).send({
+      data: messages,
+    });
+  });
+
+  server.get("/messages/:id", async (request, reply) => {
+    const apiKey = getApiKey(request);
+    if (!apiKey) {
+      throw new UnauthorizedError("Missing API key");
+    }
+
+    const { id } = request.params as { id: string };
+    if (!id) {
+      throw new UnauthorizedError("Message ID is required");
+    }
+
+    const authContext = await request.server.services.apiKeys.verifyApiKey(apiKey);
+    const message = await request.server.services.messages.getMessage(authContext, id);
+
+    return reply.code(200).send({
+      data: message,
+    });
+  });
+
+  server.delete("/messages/:id", async (request, reply) => {
+    const apiKey = getApiKey(request);
+    if (!apiKey) {
+      throw new UnauthorizedError("Missing API key");
+    }
+
+    const { id } = request.params as { id: string };
+    if (!id) {
+      throw new UnauthorizedError("Message ID is required");
+    }
+
+    const authContext = await request.server.services.apiKeys.verifyApiKey(apiKey);
+    await request.server.services.messages.cancelMessage(authContext, id);
+
+    return reply.code(204).send();
   });
 }
 
@@ -75,54 +127,4 @@ function withIdempotencyKey(
     ...body,
     idempotencyKey: result.data,
   };
-}
-
-server.get("/messages", async (request, reply) => {
-  const apiKey = getApiKey(request);
-  if (!apiKey) {
-    throw new UnauthorizedError("Missing API key");
-  }
-
-  const authContext = await server.services.apiKeys.verifyApiKey(apiKey);
-  const messages = await server.services.messages.listMessages(authContext);
-
-  return reply.code(200).send({
-    data: messages,
-  });
-});
-
-server.get("/messages/:id", async (request, reply) => {
-  const apiKey = getApiKey(request);
-  if (!apiKey) {
-    throw new UnauthorizedError("Missing API key");
-  }
-
-  const { id } = request.params as { id: string };
-  if (!id) {
-    throw new ValidationError("Message ID is required");
-  }
-
-  const authContext = await server.services.apiKeys.verifyApiKey(apiKey);
-  const message = await server.services.messages.getMessage(authContext, id);
-
-  return reply.code(200).send({
-    data: message,
-  });
-});
-
-server.delete("/messages/:id", async (request, reply) => {
-  const apiKey = getApiKey(request);
-  if (!apiKey) {
-    throw new UnauthorizedError("Missing API key");
-  }
-
-  const { id } = request.params as { id: string };
-  if (!id) {
-    throw new ValidationError("Message ID is required");
-  }
-
-  const authContext = await server.services.apiKeys.verifyApiKey(apiKey);
-  await server.services.messages.cancelMessage(authContext, id);
-
-  return reply.code(204).send();
-});
+};

@@ -19,17 +19,17 @@ export interface JobResult {
 }
 
 export const QUEUE_NAMES: Record<Channel, string> = {
-  sms: "q:sms",
-  whatsapp: "q:whatsapp",
-  email: "q:email",
-  voice: "q:voice",
+  sms: "q-sms",
+  whatsapp: "q-whatsapp",
+  email: "q-email",
+  voice: "q-voice",
 };
 
 export const DLQ_NAMES: Record<Channel, string> = {
-  sms: "dlq:sms",
-  whatsapp: "dlq:whatsapp",
-  email: "dlq:email",
-  voice: "dlq:voice",
+  sms: "dlq-sms",
+  whatsapp: "dlq-whatsapp",
+  email: "dlq-email",
+  voice: "dlq-voice",
 };
 
 export const RETRY_CONFIG = {

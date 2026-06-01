@@ -9,6 +9,12 @@
     },
     {
       "path": "./apps/api-gateway"
+    },
+    {
+      "path": "./apps/webhook-receiver"
+    },
+    {
+      "path": "./apps/admin-api"
     }
   ],
   "compilerOptions": {

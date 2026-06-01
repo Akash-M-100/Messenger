@@ -1,0 +1,20 @@
+{
+  "name": "@ums/admin-api",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node --env-file=../../.env dist/index.js",
+    "dev": "pnpm build && pnpm start"
+  },
+  "dependencies": {
+    "@ums/core": "workspace:*",
+    "@ums/db": "workspace:*",
+    "fastify": "^5.3.3",
+    "zod": "^3.25.36"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.24",
+    "typescript": "^5.9.3"
+  }
+}

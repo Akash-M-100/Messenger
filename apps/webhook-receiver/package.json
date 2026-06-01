@@ -1,0 +1,31 @@
+{
+  "name": "@ums/webhook-receiver",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node --env-file=../../.env dist/index.js",
+    "typecheck": "tsc -b --pretty false",
+    "dev": "pnpm build && pnpm start",
+    "dev:watch": "tsc -b --watch --preserveWatchOutput",
+    "clean": "tsc -b --clean"
+  },
+  "dependencies": {
+    "@ums/db": "workspace:*",
+    "fastify": "^5.3.3",
+    "zod": "^3.25.36"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.24"
+  }
+}

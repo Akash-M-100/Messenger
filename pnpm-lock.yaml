@@ -18,7 +18,51 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  apps/admin-api:
+    dependencies:
+      '@ums/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@ums/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      fastify:
+        specifier: ^5.3.3
+        version: 5.8.5
+      zod:
+        specifier: ^3.25.36
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.15.24
+        version: 22.19.19
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   apps/api-gateway:
+    dependencies:
+      '@ums/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@ums/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@ums/queue':
+        specifier: workspace:*
+        version: link:../../packages/queue
+      fastify:
+        specifier: ^5.3.3
+        version: 5.8.5
+      zod:
+        specifier: ^3.25.36
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.15.24
+        version: 22.19.19
+
+  apps/webhook-receiver:
     dependencies:
       '@ums/db':
         specifier: workspace:*

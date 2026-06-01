@@ -19,12 +19,11 @@ export class ResendEmailProvider implements IChannelProvider {
         Authorization: `Bearer ${this.apiKey}`,
       },
       body: JSON.stringify({
-        from: payload.content?.from || "noreply@resend.dev",
+        from: "noreply@resend.dev",
         to: payload.recipient.email,
         subject: payload.content?.subject || "Message",
         html: payload.content?.html || payload.content?.body,
         text: payload.content?.body,
-        reply_to: payload.content?.replyTo,
         headers: payload.metadata?.headers || {},
       }),
     });
