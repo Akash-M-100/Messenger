@@ -14,12 +14,6 @@ export async function processMessage(
       where: { id: job.data.message_id },
     });
 
-    // Update to DISPATCHING
-    await prisma.message.update({
-      where: { id: message.id },
-      data: { status: MessageStatus.SENT },
-    });
-
     // Send via provider
     const content: Record<string, string> = {};
     if (message.subject) content.subject = message.subject;
@@ -35,12 +29,13 @@ export async function processMessage(
       metadata: (message.metadata ?? undefined) as Record<string, unknown>,
     });
 
-    // Update to DELIVERED
+    // Update to DISPATCHED with provider message ID as externalId
     await prisma.message.update({
       where: { id: message.id },
       data: {
-        status: MessageStatus.DELIVERED,
-        deliveredAt: new Date(),
+        status: MessageStatus.DISPATCHED,
+        externalId: result.providerMessageId,
+        sentAt: new Date(),
       },
     });
 
