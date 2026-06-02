@@ -76,6 +76,11 @@ function normalizeError(error: unknown): AppError {
   }
 
   if (error instanceof RetryError) {
+    const lastError = normalizeError(error.lastError);
+    if (lastError.statusCode < 500) {
+      return lastError;
+    }
+
     return new AppError(
       503,
       "SERVICE_UNAVAILABLE",
