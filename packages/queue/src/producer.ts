@@ -1,4 +1,4 @@
-import { PRIORITY_MAP, RETRY_DELAYS, type Channel, type MessageJobData, type Priority } from "./types.js";
+import { PRIORITY_MAP, RETRY_CONFIG, type Channel, type MessageJobData, type Priority } from "./types.js";
 import { QueueManager } from "./queues.js";
 
 export interface ProducerConfig {
@@ -34,10 +34,8 @@ export class MessageProducer {
       `message-${messageId}`,
       jobData,
       {
-        attempts: RETRY_DELAYS.length,
-        backoff: {
-          type: "custom",
-        },
+        attempts: RETRY_CONFIG.attempts,
+        backoff: RETRY_CONFIG.backoff,
         priority: PRIORITY_MAP[priority],
         jobId: messageId, // Use message ID as job ID for deduplication
         removeOnComplete: {

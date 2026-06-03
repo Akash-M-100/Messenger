@@ -17,7 +17,7 @@ export async function processMessage(
     // Update to DISPATCHING
     await prisma.message.update({
       where: { id: message.id },
-      data: { status: MessageStatus.SENT },
+      data: { status: MessageStatus.DISPATCHED },
     });
 
 

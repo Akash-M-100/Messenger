@@ -1,4 +1,4 @@
-import { DbClient, Template } from "@ums/db";
+import { DbClient, MessageChannel, Template } from "@ums/db";
 import {
   CreateTemplateInput,
   UpdateTemplateInput,
@@ -6,16 +6,31 @@ import {
 } from "../schemas/templates.js";
 import { PaginatedResponse, PaginationParams } from "../schemas/pagination.js";
 
+const VALID_MESSAGE_CHANNELS = ["SMS", "EMAIL", "WHATSAPP", "VOICE"] as const satisfies readonly MessageChannel[];
+
+function isMessageChannel(channel: string): channel is MessageChannel {
+  return (VALID_MESSAGE_CHANNELS as readonly string[]).includes(channel);
+}
+
+function assertMessageChannel(channel: string): asserts channel is MessageChannel {
+  if (!isMessageChannel(channel)) {
+    throw new Error(`Unsupported template channel: ${channel}`);
+  }
+}
+
 export class TemplateService {
   constructor(private db: DbClient) {}
 
   async createTemplate(tenantId: string, input: CreateTemplateInput): Promise<Template> {
+    assertMessageChannel(input.channel);
+
     return this.db.template.create({
       data: {
         tenantId,
         name: input.name,
         channel: input.channel,
         type: input.type,
+        body: input.content,
         content: input.content,
         variables: input.variables,
         metadata: input.metadata ?? {},

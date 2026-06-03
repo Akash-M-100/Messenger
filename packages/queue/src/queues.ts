@@ -36,8 +36,8 @@ export class QueueManager {
         defaultJobOptions: {
           attempts: RETRY_DELAYS.length,
           backoff: {
-            type: "fixed",
-            delay: RETRY_DELAYS[0] ?? 60000, // Will be overridden by custom backoff
+            type: "exponential",
+            delay: 60000,
           },
           removeOnComplete: {
             age: 3600, // Keep completed jobs for 1 hour

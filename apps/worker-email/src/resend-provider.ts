@@ -19,7 +19,7 @@ export class ResendEmailProvider implements IChannelProvider {
         Authorization: `Bearer ${this.apiKey}`,
       },
       body: JSON.stringify({
-        from: "noreply@resend.dev",
+        from: "onboarding@resend.dev",
         to: payload.recipient.email,
         subject: payload.content?.subject || "Message",
         html: payload.content?.html || payload.content?.body,
@@ -81,7 +81,7 @@ export class ResendEmailProvider implements IChannelProvider {
           Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
-          from: "noreply@resend.dev",
+          from: "onboarding@resend.dev",
           to: "delivered@resend.dev",
           subject: "Health Check",
           html: "<p>Health check</p>",
