@@ -18,6 +18,7 @@ export class MessageProducer {
     channel: Channel,
     priority: Priority = "normal",
     idempotencyKey?: string,
+    correlationId?: string,
   ): Promise<string> {
     const queue = this.queueManager.getQueue(channel);
 
@@ -28,6 +29,7 @@ export class MessageProducer {
       priority,
       created_at: new Date().toISOString(),
       idempotency_key: idempotencyKey,
+      correlation_id: correlationId,
     };
 
     const job = await queue.add(
@@ -57,6 +59,7 @@ export class MessageProducer {
       channel: Channel;
       priority?: Priority;
       idempotencyKey?: string;
+      correlationId?: string;
     }>,
   ): Promise<string[]> {
     const jobIds: string[] = [];
@@ -68,6 +71,7 @@ export class MessageProducer {
         msg.channel,
         msg.priority ?? "normal",
         msg.idempotencyKey,
+        msg.correlationId,
       );
       jobIds.push(jobId);
     }

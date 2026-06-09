@@ -9,6 +9,7 @@ export interface MessageJobData {
   priority: Priority;
   created_at: string;
   idempotency_key?: string | undefined;
+  correlation_id?: string | undefined;
 }
 
 export interface JobResult {

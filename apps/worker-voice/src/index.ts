@@ -4,8 +4,11 @@ import type { Job } from "bullmq";
 import { MockVoiceProvider } from "./mock-provider.js";
 import { TwilioVoiceProvider } from "./twilio-provider.js";
 import { processMessage } from "./processor.js";
+import { startMetricsServer } from "./metrics.js";
 
 const channel: Channel = "voice";
+const providerName =
+  process.env.TWILIO_ACCOUNT_SID ? "Twilio" : "Mock";
 const prisma = new PrismaClient();
 const redis = createRedisConnection({
   host: process.env.REDIS_HOST || "localhost",
@@ -26,7 +29,7 @@ class VoiceWorker extends BaseConsumer {
       : new MockVoiceProvider();
 
   async processJob(job: Job<MessageJobData>): Promise<JobResult> {
-    return processMessage(job, this.provider, prisma);
+    return processMessage(job, this.provider, prisma, providerName);
   }
 }
 
@@ -38,8 +41,9 @@ async function start() {
     concurrency: 5,
   });
 
-  const providerName =
-    process.env.TWILIO_ACCOUNT_SID ? "Twilio" : "Mock";
+  const metricsServer = startMetricsServer(
+    parseInt(process.env.METRICS_PORT || "9104", 10),
+  );
   console.log(`✓ Voice Worker started (${providerName})`);
 
   process.on("SIGTERM", async () => {
@@ -47,6 +51,7 @@ async function start() {
     await worker.close();
     await queueManager.closeAll();
     await prisma.$disconnect();
+    metricsServer.close();
     process.exit(0);
   });
 }

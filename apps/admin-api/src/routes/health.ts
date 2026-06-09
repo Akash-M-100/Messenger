@@ -8,26 +8,21 @@ interface DependencyCheck {
   error?: string;
 }
 
-interface HealthResponse {
-  status: HealthStatus;
-  uptime: number;
-  timestamp: string;
-  checks: {
-    database: DependencyCheck;
-    redis: DependencyCheck;
-  };
-}
-
 export async function registerHealthRoutes(
   server: FastifyInstance,
 ): Promise<void> {
   server.get("/healthz", async (_request, reply) => {
     const [database, redis] = await Promise.all([
-      checkDatabase(server),
-      checkRedis(server),
+      measureDependency(async () => {
+        await server.db.$queryRaw`SELECT 1`;
+      }),
+      measureDependency(async () => {
+        await server.redis.ping();
+      }),
     ]);
     const status = getOverallStatus([database, redis]);
-    const response: HealthResponse = {
+
+    return reply.code(status === "down" ? 503 : 200).send({
       status,
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
@@ -35,21 +30,7 @@ export async function registerHealthRoutes(
         database,
         redis,
       },
-    };
-
-    return reply.code(status === "down" ? 503 : 200).send(response);
-  });
-}
-
-async function checkDatabase(server: FastifyInstance): Promise<DependencyCheck> {
-  return measureDependency(async () => {
-    await server.db.$queryRaw`SELECT 1`;
-  });
-}
-
-async function checkRedis(server: FastifyInstance): Promise<DependencyCheck> {
-  return measureDependency(async () => {
-    await server.redis.ping();
+    });
   });
 }
 

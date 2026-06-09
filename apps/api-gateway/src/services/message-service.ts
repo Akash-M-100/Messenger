@@ -22,6 +22,7 @@ export interface MessageService {
   createMessage(
     authContext: AuthContext,
     request: CreateMessageRequest,
+    correlationId?: string,
   ): Promise<CreateMessageResponse>;
   listMessages(authContext: AuthContext): Promise<CreateMessageResponse[]>;
   getMessage(
@@ -45,7 +46,7 @@ export function createMessageService(
   const producer = new MessageProducer({ queueManager: dependencies.queueManager });
 
   return {
-    async createMessage(authContext, request) {
+    async createMessage(authContext, request, correlationId) {
       try {
         if (request.idempotencyKey) {
           const existing = await withRetry(
@@ -110,8 +111,9 @@ export function createMessageService(
           createData.payload = toNullableJson(request.payload);
         }
 
-        if (request.metadata !== undefined) {
-          createData.metadata = toNullableJson(request.metadata);
+        const metadata = buildMessageMetadata(request);
+        if (metadata !== undefined) {
+          createData.metadata = toNullableJson(metadata);
         }
 
         if (scheduledAt) {
@@ -132,6 +134,7 @@ export function createMessageService(
               request.channel.toLowerCase() as any,
               "normal",
               request.idempotencyKey,
+              correlationId,
             );
           } catch (queueError) {
             // Log queue error but don't fail the message creation
@@ -294,4 +297,37 @@ function toNullableJson(
   }
 
   return value as Prisma.InputJsonValue;
+}
+
+function buildMessageMetadata(
+  request: CreateMessageRequest,
+): Record<string, unknown> | null | undefined {
+  const metadata =
+    request.metadata && typeof request.metadata === "object" && !Array.isArray(request.metadata)
+      ? { ...(request.metadata as Record<string, unknown>) }
+      : request.metadata === null
+        ? null
+        : undefined;
+
+  const passthroughMetadata: Record<string, unknown> = {};
+  for (const key of [
+    "dlt_template_id",
+    "dlt_entity_id",
+    "sender_id",
+    "last_user_message_at",
+    "is_template",
+  ] as const) {
+    if (request[key] !== undefined) {
+      passthroughMetadata[key] = request[key];
+    }
+  }
+
+  if (Object.keys(passthroughMetadata).length === 0) {
+    return metadata;
+  }
+
+  return {
+    ...(metadata ?? {}),
+    ...passthroughMetadata,
+  };
 }

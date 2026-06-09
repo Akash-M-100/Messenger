@@ -5,6 +5,11 @@ export function registerAdminAuth(
   adminSecret: string,
 ): void {
   server.addHook("onRequest", async (request: FastifyRequest, reply: FastifyReply) => {
+    const path = request.url.split("?")[0];
+    if (path === "/healthz" || path === "/metrics") {
+      return;
+    }
+
     const authHeader = request.headers.authorization || "";
     const expectedAuth = `Bearer ${adminSecret}`;
 
