@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { Registry, collectDefaultMetrics } from "prom-client";
 
-const metricsRegistry = new Registry();
+export const metricsRegistry = new Registry();
 
 collectDefaultMetrics({
   register: metricsRegistry,

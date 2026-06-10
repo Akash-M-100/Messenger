@@ -26,7 +26,7 @@ export async function processMessage(
     // Update to DISPATCHING
     await prisma.message.update({
       where: { id: message.id },
-      data: { status: MessageStatus.SENT },
+      data: { status: MessageStatus.DISPATCHED },
     });
 
     // Send via provider
@@ -86,15 +86,7 @@ export async function processMessage(
       },
     });
 
-    if (process.env.RETHROW_WORKER_ERRORS === "true") {
-      throw error;
-    }
-
-    return {
-      success: false,
-      error: errorMessage,
-      retry_count: job.attemptsMade,
-    };
+    throw error;
   } finally {
     jobDurationSeconds.observe(
       {

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createTemplateSchema = z.object({
   name: z.string().min(1).max(160),
-  channel: z.enum(["SMS", "EMAIL", "WHATSAPP", "PUSH", "IN_APP"]),
+  channel: z.enum(["SMS", "EMAIL", "WHATSAPP", "VOICE"]),
   type: z.enum(["TEXT", "PROMOTIONAL", "TRANSACTIONAL", "OTP"]).default("TEXT"),
   content: z.string().min(1),
   variables: z.array(z.string()).default([]),

@@ -43,4 +43,6 @@ export interface CreateMessageResponse {
   to: string;
   scheduledAt: string | null;
   createdAt: string;
+  fallback?: boolean;
+  originalChannel?: MessageChannel;
 }

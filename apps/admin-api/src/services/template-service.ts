@@ -16,6 +16,7 @@ export class TemplateService {
         name: input.name,
         channel: input.channel,
         type: input.type,
+        body: input.content,
         content: input.content,
         variables: input.variables,
         metadata: input.metadata ?? {},

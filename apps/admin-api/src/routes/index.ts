@@ -7,6 +7,7 @@ import { registerAuditLogRoutes } from "./audit-logs.js";
 import { registerProviderRoutes } from "./providers.js";
 import { registerHealthRoutes } from "./health.js";
 import { registerMetricsRoutes } from "./metrics.js";
+import { registerDlqRoutes } from "./dlq.js";
 
 export async function registerRoutes(server: FastifyInstance): Promise<void> {
   await registerHealthRoutes(server);
@@ -17,4 +18,5 @@ export async function registerRoutes(server: FastifyInstance): Promise<void> {
   await registerMessageRoutes(server);
   await registerAuditLogRoutes(server);
   await registerProviderRoutes(server);
+  await registerDlqRoutes(server);
 }

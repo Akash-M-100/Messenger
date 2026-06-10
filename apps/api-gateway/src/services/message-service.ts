@@ -10,7 +10,7 @@ import {
   withRetry,
   type RedisInstance,
 } from "@ums/core";
-import { MessageProducer, type QueueManager } from "@ums/queue";
+import { MessageProducer, type QueueManager, type Channel } from "@ums/queue";
 
 import type {
   CreateMessageRequest,
@@ -126,6 +126,7 @@ export function createMessageService(
         );
 
         // Enqueue message for processing (unless it's scheduled for later)
+        let messageToReturn = message;
         if (!scheduledAt) {
           try {
             await producer.enqueueMessage(
@@ -147,13 +148,56 @@ export function createMessageService(
                 error: queueError instanceof Error ? queueError.message : String(queueError),
               },
             );
+
+            // Attempt fallback immediately
+            let fallbackChannel: "SMS" | "WHATSAPP" | "EMAIL" | "VOICE" | null = null;
+            if (request.channel === "SMS") {
+              fallbackChannel = "WHATSAPP";
+            } else if (request.channel === "WHATSAPP") {
+              fallbackChannel = "SMS";
+            } else if (request.channel === "VOICE") {
+              fallbackChannel = "SMS";
+            }
+
+            if (fallbackChannel) {
+              try {
+                const updatedMetadata = {
+                  ...(buildMessageMetadata(request) || {}),
+                  fallback: true,
+                  original_channel: request.channel,
+                  fallback_channel: fallbackChannel,
+                  fallback_reason: "enqueueing failed",
+                };
+
+                // Update database message with fallback channel and metadata
+                messageToReturn = await dependencies.db.message.update({
+                  where: { id: message.id },
+                  data: {
+                    channel: fallbackChannel,
+                    metadata: updatedMetadata,
+                  },
+                });
+
+                // Enqueue to fallback queue
+                await producer.enqueueMessage(
+                  message.id,
+                  authContext.tenantId,
+                  fallbackChannel.toLowerCase() as Channel,
+                  "normal",
+                  request.idempotencyKey,
+                  correlationId,
+                );
+              } catch (fallbackError) {
+                console.error("Fallback enqueuing failed after initial enqueue failure:", fallbackError);
+              }
+            }
           }
         }
 
         // Invalidate list cache on create
         await cache.invalidate(`messages:list:${authContext.tenantId}`);
 
-        return toCreateMessageResponse(message);
+        return toCreateMessageResponse(messageToReturn);
       } catch (error) {
         const errorDetails = extractErrorDetails(error);
         console.error(
@@ -278,6 +322,9 @@ type PersistedMessage = Awaited<
 function toCreateMessageResponse(
   message: PersistedMessage,
 ): CreateMessageResponse {
+  const metadata = message.metadata as any;
+  const isFallback = metadata && typeof metadata === "object" && metadata.fallback === true;
+
   return {
     id: message.id,
     externalId: message.externalId,
@@ -286,6 +333,10 @@ function toCreateMessageResponse(
     to: message.toAddress,
     scheduledAt: message.scheduledAt?.toISOString() ?? null,
     createdAt: message.createdAt.toISOString(),
+    ...(isFallback ? {
+      fallback: true,
+      originalChannel: metadata.original_channel,
+    } : {}),
   };
 }
 

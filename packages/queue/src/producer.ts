@@ -36,16 +36,18 @@ export class MessageProducer {
       `message-${messageId}`,
       jobData,
       {
-        attempts: RETRY_DELAYS.length,
+        attempts: 3,
         backoff: {
-          type: "custom",
+          type: "customExponential",
         },
         priority: PRIORITY_MAP[priority],
         jobId: messageId, // Use message ID as job ID for deduplication
         removeOnComplete: {
-          age: 3600, // Keep completed jobs for 1 hour for audit
+          count: 100,
         },
-        removeOnFail: false, // Keep failed jobs for DLQ processing
+        removeOnFail: {
+          count: 500,
+        },
       },
     );
 

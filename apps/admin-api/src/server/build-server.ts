@@ -1,6 +1,8 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import type { DbClient } from "@ums/db";
 import type { RedisInstance } from "@ums/core";
+import { createDeadLetterQueue, type DeadLetterQueue } from "@ums/queue";
+import { metricsRegistry } from "../routes/metrics.js";
 
 import { registerErrorHandler } from "../middleware/error-handler.js";
 import { registerAdminAuth } from "../middleware/admin-auth.js";
@@ -12,6 +14,7 @@ declare module "fastify" {
     db: DbClient;
     redis: RedisInstance;
     config: AdminConfig;
+    dlq: DeadLetterQueue;
   }
 }
 
@@ -31,9 +34,12 @@ export async function buildAdminServer(
   registerErrorHandler(server);
   registerAdminAuth(server, options.config.adminSecret);
 
+  const dlq = await createDeadLetterQueue(options.redis, metricsRegistry);
+
   server.decorate("db", options.db);
   server.decorate("redis", options.redis);
   server.decorate("config", options.config);
+  server.decorate("dlq", dlq);
 
   await registerRoutes(server);
 

@@ -22,6 +22,9 @@ export function registerAdminAuth(
       });
     }
 
-    // Token is valid, continue
+    const tenantIdHeader = request.headers["x-tenant-id"];
+    if (tenantIdHeader) {
+      (request as any).tenantId = Array.isArray(tenantIdHeader) ? tenantIdHeader[0] : tenantIdHeader;
+    }
   });
 }

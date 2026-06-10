@@ -86,11 +86,7 @@ export async function processMessage(
       },
     });
 
-    return {
-      success: false,
-      error: errorMessage,
-      retry_count: job.attemptsMade,
-    };
+    throw error;
   } finally {
     jobDurationSeconds.observe(
       {

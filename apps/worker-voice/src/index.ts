@@ -4,7 +4,7 @@ import type { Job } from "bullmq";
 import { MockVoiceProvider } from "./mock-provider.js";
 import { TwilioVoiceProvider } from "./twilio-provider.js";
 import { processMessage } from "./processor.js";
-import { startMetricsServer } from "./metrics.js";
+import { startMetricsServer, metricsRegistry } from "./metrics.js";
 
 const channel: Channel = "voice";
 const providerName =
@@ -39,6 +39,8 @@ async function start() {
     connection: redis,
     channel,
     concurrency: 5,
+    prisma,
+    registry: metricsRegistry,
   });
 
   const metricsServer = startMetricsServer(

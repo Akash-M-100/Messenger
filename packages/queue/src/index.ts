@@ -3,7 +3,7 @@ export { createRedisConnection, getRedisConfigFromEnv } from "./redis.js";
 export type { RedisConfig } from "./redis.js";
 
 // Re-export types
-export type { Channel, Priority, MessageJobData, JobResult } from "./types.js";
+export type { Channel, Priority, MessageJobData, DLQJobData, JobResult } from "./types.js";
 export {
   QUEUE_NAMES,
   DLQ_NAMES,

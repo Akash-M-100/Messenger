@@ -34,15 +34,16 @@ export class QueueManager {
       const queue = new Queue<MessageJobData>(QUEUE_NAMES[channel], {
         connection: this.redis,
         defaultJobOptions: {
-          attempts: RETRY_DELAYS.length,
+          attempts: 3,
           backoff: {
-            type: "fixed",
-            delay: RETRY_DELAYS[0] ?? 60000, // Will be overridden by custom backoff
+            type: "customExponential",
           },
           removeOnComplete: {
-            age: 3600, // Keep completed jobs for 1 hour
+            count: 100,
           },
-          removeOnFail: false, // Keep failed jobs for debugging
+          removeOnFail: {
+            count: 500,
+          },
         },
       });
 

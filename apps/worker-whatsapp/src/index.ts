@@ -4,7 +4,7 @@ import type { Job } from "bullmq";
 import { MockWhatsAppProvider } from "./mock-provider.js";
 import { TwilioWhatsAppProvider } from "./twilio-provider.js";
 import { processMessage } from "./processor.js";
-import { startMetricsServer } from "./metrics.js";
+import { startMetricsServer, metricsRegistry } from "./metrics.js";
 
 const channel: Channel = "whatsapp";
 const providerName =
@@ -39,6 +39,8 @@ async function start() {
     connection: redis,
     channel,
     concurrency: 8,
+    prisma,
+    registry: metricsRegistry,
   });
 
   const metricsServer = startMetricsServer(
