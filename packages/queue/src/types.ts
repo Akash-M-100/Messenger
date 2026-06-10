@@ -9,6 +9,20 @@ export interface MessageJobData {
   priority: Priority;
   created_at: string;
   idempotency_key?: string | undefined;
+  correlation_id?: string | undefined;
+}
+
+export interface DLQJobData {
+  jobId: string;
+  messageId: string;
+  channel: Channel;
+  error: string;
+  attempts: number;
+  timestamp: string;
+  tenantId?: string;
+  priority?: Priority;
+  idempotencyKey?: string;
+  correlationId?: string;
 }
 
 export interface JobResult {
@@ -35,8 +49,7 @@ export const DLQ_NAMES: Record<Channel, string> = {
 export const RETRY_CONFIG = {
   attempts: 3,
   backoff: {
-    type: "exponential" as const,
-    delay: 60000, // 1 minute initial delay
+    type: "customExponential" as const,
   },
 };
 
@@ -48,3 +61,4 @@ export const PRIORITY_MAP: Record<Priority, number> = {
   normal: 5,
   low: 10,
 };
+

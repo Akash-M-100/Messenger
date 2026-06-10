@@ -9,9 +9,10 @@ import {
 import { AppError, ConflictError, ValidationError } from "./errors.js";
 
 export function registerErrorHandler(server: FastifyInstance): void {
-  server.setErrorHandler((error, _request, reply) => {
+  server.setErrorHandler((error, request, reply) => {
     const appError = normalizeError(error);
     const errorDetails = extractErrorDetails(error);
+    const correlationId = request.correlationId;
 
     if (appError.statusCode >= 500) {
       server.log.error(
@@ -19,6 +20,7 @@ export function registerErrorHandler(server: FastifyInstance): void {
           error: errorDetails,
           code: appError.code,
           statusCode: appError.statusCode,
+          correlationId,
         },
         appError.message,
       );
@@ -28,6 +30,7 @@ export function registerErrorHandler(server: FastifyInstance): void {
           error: errorDetails,
           code: appError.code,
           statusCode: appError.statusCode,
+          correlationId,
         },
         appError.message,
       );

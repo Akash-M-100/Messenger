@@ -18,17 +18,20 @@
     "typecheck": "tsc -b --pretty false",
     "dev": "pnpm build && pnpm start",
     "dev:watch": "tsc -b --watch --preserveWatchOutput",
-    "clean": "tsc -b --clean"
+    "clean": "tsc -b --clean",
+    "test:integration": "vitest run src/tests/integration"
   },
   "dependencies": {
     "@ums/core": "workspace:*",
     "@ums/db": "workspace:*",
     "@ums/queue": "workspace:*",
     "fastify": "^5.3.3",
+    "prom-client": "^15.1.3",
     "zod": "^3.25.36"
   },
   "devDependencies": {
     "@types/node": "^22.15.24",
+    "bullmq": "^5.14.0",
     "vitest": "^4.1.8"
   }
 }

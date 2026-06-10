@@ -1,14 +1,20 @@
 import { prisma } from "@ums/db";
+import {
+  createRedisConnection,
+  getRedisConfigFromEnv,
+} from "@ums/queue";
 import { loadAdminConfig } from "./server/config.js";
 import { buildAdminServer } from "./server/build-server.js";
 
 async function main(): Promise<void> {
   try {
     const config = loadAdminConfig(process.env);
+    const redis = createRedisConnection(getRedisConfigFromEnv());
 
     const server = await buildAdminServer({
       config,
       db: prisma,
+      redis,
     });
 
     const address = await server.listen({ port: config.port, host: config.host });
@@ -20,6 +26,8 @@ async function main(): Promise<void> {
       process.on(signal, async () => {
         server.log.info(`Received ${signal}, shutting down gracefully...`);
         await server.close();
+        await redis.quit();
+        await prisma.$disconnect();
         process.exit(0);
       });
     });

@@ -21,6 +21,16 @@ export class TwilioSMSProvider implements IChannelProvider {
   }
 
   async send(payload: SendPayload): Promise<SendResult> {
+    const requestBody = new URLSearchParams({
+      From: this.fromNumber,
+      To: payload.recipient.phone || "",
+      Body: payload.content?.body || "",
+    });
+    const statusCallback = buildStatusCallbackUrl(payload.metadata);
+    if (statusCallback) {
+      requestBody.set("StatusCallback", statusCallback);
+    }
+
     const response = await fetch(
       `https://api.twilio.com/2010-04-01/Accounts/${this.accountSid}/Messages.json`,
       {
@@ -29,11 +39,7 @@ export class TwilioSMSProvider implements IChannelProvider {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: this.getAuthHeader(),
         },
-        body: new URLSearchParams({
-          From: this.fromNumber,
-          To: payload.recipient.phone || "",
-          Body: payload.content?.body || "",
-        }).toString(),
+        body: requestBody.toString(),
       },
     );
 
@@ -100,4 +106,31 @@ export class TwilioSMSProvider implements IChannelProvider {
       return { healthy: false, latencyMs, error: (error as Error).message };
     }
   }
+}
+
+function buildStatusCallbackUrl(
+  metadata: Record<string, unknown> | undefined,
+): string | undefined {
+  const configuredUrl =
+    stringValue(metadata?.status_callback_url) ||
+    stringValue(process.env.TWILIO_SMS_STATUS_CALLBACK_URL);
+  if (!configuredUrl) {
+    return undefined;
+  }
+
+  const url = new URL(configuredUrl);
+  for (const key of ["dlt_template_id", "dlt_entity_id", "sender_id"]) {
+    const value = stringValue(metadata?.[key]);
+    if (value) {
+      url.searchParams.set(key, value);
+    }
+  }
+
+  return url.toString();
+}
+
+function stringValue(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
 }

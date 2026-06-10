@@ -10,7 +10,7 @@ import {
   withRetry,
   type RedisInstance,
 } from "@ums/core";
-import { MessageProducer, type QueueManager } from "@ums/queue";
+import { MessageProducer, type QueueManager, type Channel } from "@ums/queue";
 
 import type {
   CreateMessageRequest,
@@ -22,6 +22,7 @@ export interface MessageService {
   createMessage(
     authContext: AuthContext,
     request: CreateMessageRequest,
+    correlationId?: string,
   ): Promise<CreateMessageResponse>;
   listMessages(authContext: AuthContext): Promise<CreateMessageResponse[]>;
   getMessage(
@@ -45,7 +46,7 @@ export function createMessageService(
   const producer = new MessageProducer({ queueManager: dependencies.queueManager });
 
   return {
-    async createMessage(authContext, request) {
+    async createMessage(authContext, request, correlationId) {
       try {
         if (request.idempotencyKey) {
           const existing = await withRetry(
@@ -110,8 +111,9 @@ export function createMessageService(
           createData.payload = toNullableJson(request.payload);
         }
 
-        if (request.metadata !== undefined) {
-          createData.metadata = toNullableJson(request.metadata);
+        const metadata = buildMessageMetadata(request);
+        if (metadata !== undefined) {
+          createData.metadata = toNullableJson(metadata);
         }
 
         if (scheduledAt) {
@@ -124,6 +126,7 @@ export function createMessageService(
         );
 
         // Enqueue message for processing (unless it's scheduled for later)
+        let messageToReturn = message;
         if (!scheduledAt) {
           try {
             await producer.enqueueMessage(
@@ -132,6 +135,7 @@ export function createMessageService(
               request.channel.toLowerCase() as any,
               "normal",
               request.idempotencyKey,
+              correlationId,
             );
           } catch (queueError) {
             // Log queue error but don't fail the message creation
@@ -144,13 +148,56 @@ export function createMessageService(
                 error: queueError instanceof Error ? queueError.message : String(queueError),
               },
             );
+
+            // Attempt fallback immediately
+            let fallbackChannel: "SMS" | "WHATSAPP" | "EMAIL" | "VOICE" | null = null;
+            if (request.channel === "SMS") {
+              fallbackChannel = "WHATSAPP";
+            } else if (request.channel === "WHATSAPP") {
+              fallbackChannel = "SMS";
+            } else if (request.channel === "VOICE") {
+              fallbackChannel = "SMS";
+            }
+
+            if (fallbackChannel) {
+              try {
+                const updatedMetadata = {
+                  ...(buildMessageMetadata(request) || {}),
+                  fallback: true,
+                  original_channel: request.channel,
+                  fallback_channel: fallbackChannel,
+                  fallback_reason: "enqueueing failed",
+                };
+
+                // Update database message with fallback channel and metadata
+                messageToReturn = await dependencies.db.message.update({
+                  where: { id: message.id },
+                  data: {
+                    channel: fallbackChannel,
+                    metadata: updatedMetadata,
+                  },
+                });
+
+                // Enqueue to fallback queue
+                await producer.enqueueMessage(
+                  message.id,
+                  authContext.tenantId,
+                  fallbackChannel.toLowerCase() as Channel,
+                  "normal",
+                  request.idempotencyKey,
+                  correlationId,
+                );
+              } catch (fallbackError) {
+                console.error("Fallback enqueuing failed after initial enqueue failure:", fallbackError);
+              }
+            }
           }
         }
 
         // Invalidate list cache on create
         await cache.invalidate(`messages:list:${authContext.tenantId}`);
 
-        return toCreateMessageResponse(message);
+        return toCreateMessageResponse(messageToReturn);
       } catch (error) {
         const errorDetails = extractErrorDetails(error);
         console.error(
@@ -275,6 +322,9 @@ type PersistedMessage = Awaited<
 function toCreateMessageResponse(
   message: PersistedMessage,
 ): CreateMessageResponse {
+  const metadata = message.metadata as any;
+  const isFallback = metadata && typeof metadata === "object" && metadata.fallback === true;
+
   return {
     id: message.id,
     externalId: message.externalId,
@@ -283,6 +333,10 @@ function toCreateMessageResponse(
     to: message.toAddress,
     scheduledAt: message.scheduledAt?.toISOString() ?? null,
     createdAt: message.createdAt.toISOString(),
+    ...(isFallback ? {
+      fallback: true,
+      originalChannel: metadata.original_channel,
+    } : {}),
   };
 }
 
@@ -294,4 +348,37 @@ function toNullableJson(
   }
 
   return value as Prisma.InputJsonValue;
+}
+
+function buildMessageMetadata(
+  request: CreateMessageRequest,
+): Record<string, unknown> | null | undefined {
+  const metadata =
+    request.metadata && typeof request.metadata === "object" && !Array.isArray(request.metadata)
+      ? { ...(request.metadata as Record<string, unknown>) }
+      : request.metadata === null
+        ? null
+        : undefined;
+
+  const passthroughMetadata: Record<string, unknown> = {};
+  for (const key of [
+    "dlt_template_id",
+    "dlt_entity_id",
+    "sender_id",
+    "last_user_message_at",
+    "is_template",
+  ] as const) {
+    if (request[key] !== undefined) {
+      passthroughMetadata[key] = request[key];
+    }
+  }
+
+  if (Object.keys(passthroughMetadata).length === 0) {
+    return metadata;
+  }
+
+  return {
+    ...(metadata ?? {}),
+    ...passthroughMetadata,
+  };
 }

@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { FastifyRequest } from "fastify";
 
+import { messagesAcceptedTotal } from "../middleware/metrics.js";
 import { UnauthorizedError, ValidationError } from "../middleware/errors.js";
 import {
   createMessageRequestSchema,
@@ -27,7 +28,11 @@ export const registerMessageRoutes: FastifyPluginAsync = async (
     const message = await request.server.services.messages.createMessage(
       authContext,
       withIdempotencyKey(parsedBody.data, request.headers["idempotency-key"]),
+      request.correlationId,
     );
+    messagesAcceptedTotal.inc({
+      channel: parsedBody.data.channel.toLowerCase(),
+    });
 
     return reply.code(202).send({
       data: message,

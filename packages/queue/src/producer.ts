@@ -18,6 +18,7 @@ export class MessageProducer {
     channel: Channel,
     priority: Priority = "normal",
     idempotencyKey?: string,
+    correlationId?: string,
   ): Promise<string> {
     const queue = this.queueManager.getQueue(channel);
 
@@ -28,20 +29,29 @@ export class MessageProducer {
       priority,
       created_at: new Date().toISOString(),
       idempotency_key: idempotencyKey,
+      correlation_id: correlationId,
     };
 
     const job = await queue.add(
       `message-${messageId}`,
       jobData,
       {
-        attempts: RETRY_CONFIG.attempts,
-        backoff: RETRY_CONFIG.backoff,
+        ...{
+          attempts: RETRY_CONFIG.attempts,
+          backoff: RETRY_CONFIG.backoff,
+        },
+        attempts: 3,
+        backoff: {
+          type: "customExponential",
+        },
         priority: PRIORITY_MAP[priority],
         jobId: messageId, // Use message ID as job ID for deduplication
         removeOnComplete: {
-          age: 3600, // Keep completed jobs for 1 hour for audit
+          count: 100,
         },
-        removeOnFail: false, // Keep failed jobs for DLQ processing
+        removeOnFail: {
+          count: 500,
+        },
       },
     );
 
@@ -55,6 +65,7 @@ export class MessageProducer {
       channel: Channel;
       priority?: Priority;
       idempotencyKey?: string;
+      correlationId?: string;
     }>,
   ): Promise<string[]> {
     const jobIds: string[] = [];
@@ -66,6 +77,7 @@ export class MessageProducer {
         msg.channel,
         msg.priority ?? "normal",
         msg.idempotencyKey,
+        msg.correlationId,
       );
       jobIds.push(jobId);
     }
