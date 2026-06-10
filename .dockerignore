@@ -1,0 +1,40 @@
+# Production Deployment Files - Security
+
+# Environment files (never commit)
+.env
+.env.local
+.env.prod
+.env.production
+
+# Database backups
+backups/
+*.sql
+*.sql.gz
+*.dump
+
+# Docker volumes (local development)
+postgres_data/
+redis_data/
+
+# Docker build artifacts
+docker-compose.override.yml
+.dockerignore
+
+# AWS credentials and keys
+*.pem
+*.key
+*.pub
+aws/credentials
+aws/config
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS specific
+.DS_Store
+.env.swp
+Thumbs.db
