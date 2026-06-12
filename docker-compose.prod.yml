@@ -82,7 +82,7 @@ services:
     networks:
       - ums-network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_GATEWAY_PORT:-3000}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:${API_GATEWAY_PORT:-3000}/healthz"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -115,15 +115,16 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:?error}
-      HOST: 0.0.0.0
-      PORT: ${ADMIN_API_PORT:-3001}
+      ADMIN_API_HOST: 0.0.0.0
+      ADMIN_API_PORT: ${ADMIN_API_PORT:-3001}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      ADMIN_SECRET: ${ADMIN_SECRET}
     ports:
       - "${ADMIN_API_PORT:-3001}:${ADMIN_API_PORT:-3001}"
     networks:
       - ums-network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${ADMIN_API_PORT:-3001}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:${ADMIN_API_PORT:-3001}/healthz"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -164,7 +165,7 @@ services:
     networks:
       - ums-network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${WEBHOOK_PORT:-3002}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_GATEWAY_PORT:-3000}/healthz"]
       interval: 15s
       timeout: 5s
       retries: 3
