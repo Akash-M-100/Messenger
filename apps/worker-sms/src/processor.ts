@@ -79,8 +79,9 @@ export async function processMessage(
     await prisma.message.update({
       where: { id: message.id },
       data: {
-        status: MessageStatus.DELIVERED,
-        deliveredAt: new Date(),
+        status: MessageStatus.DISPATCHED,
+        externalId: result.providerMessageId,
+        sentAt: new Date(),
       },
     });
 
