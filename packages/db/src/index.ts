@@ -9,6 +9,7 @@ export type {
   Template,
   ProviderConfig,
   AuditLog,
+  User,
 } from "@prisma/client";
 export {
   ApiKeyStatus,
