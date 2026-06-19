@@ -20,11 +20,11 @@ class SMSWorker extends BaseConsumer {
   private provider =
     process.env.TWILIO_ACCOUNT_SID &&
     process.env.TWILIO_AUTH_TOKEN &&
-    process.env.TWILIO_PHONE_NUMBER
+    process.env.TWILIO_FROM_NUMBER
       ? new TwilioSMSProvider(
           process.env.TWILIO_ACCOUNT_SID,
           process.env.TWILIO_AUTH_TOKEN,
-          process.env.TWILIO_PHONE_NUMBER,
+          process.env.TWILIO_FROM_NUMBER,
         )
       : new MockSMSProvider();
 
