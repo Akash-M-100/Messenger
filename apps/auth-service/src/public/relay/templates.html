@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relay | Templates</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#131315",
+                    "on-primary-fixed": "#07006c",
+                    "on-primary-container": "#0d0096",
+                    "tertiary-container": "#d97721",
+                    "on-background": "#e5e1e4",
+                    "primary": "#c0c1ff",
+                    "secondary": "#89ceff",
+                    "error": "#ffb4ab",
+                    "surface-variant": "#353437",
+                    "outline-variant": "#464554",
+                    "tertiary-fixed": "#ffdcc5",
+                    "tertiary-fixed-dim": "#ffb783",
+                    "primary-fixed": "#e1e0ff",
+                    "secondary-fixed-dim": "#89ceff",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "tertiary": "#ffb783",
+                    "surface-bright": "#39393b",
+                    "surface-tint": "#c0c1ff",
+                    "on-surface": "#e5e1e4",
+                    "on-tertiary": "#4f2500",
+                    "inverse-surface": "#e5e1e4",
+                    "secondary-fixed": "#c9e6ff",
+                    "surface-container-lowest": "#0e0e10",
+                    "on-secondary": "#00344d",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "on-primary": "#1000a9",
+                    "primary-container": "#8083ff",
+                    "surface-container-high": "#2a2a2c",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "inverse-primary": "#4944d6",
+                    "surface-container-low": "#1c1b1d",
+                    "on-secondary-fixed": "#001e2f",
+                    "surface-container": "#201f22",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "surface": "#131315",
+                    "inverse-on-surface": "#313032",
+                    "on-tertiary-fixed": "#301400",
+                    "surface-dim": "#131315",
+                    "on-secondary-container": "#00344e",
+                    "secondary-container": "#00a2e6",
+                    "outline": "#908fa0",
+                    "on-tertiary-container": "#452000",
+                    "surface-container-highest": "#353437",
+                    "on-surface-variant": "#c7c4d7",
+                    "on-secondary-fixed-variant": "#004c6e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "8": "0.5rem",
+                    "16": "1rem",
+                    "4": "0.25rem",
+                    "64": "4rem",
+                    "24": "1.5rem",
+                    "32": "2rem",
+                    "48": "3rem"
+            },
+            "fontFamily": {
+                    "label": ["Geist"],
+                    "body-lg": ["Inter"],
+                    "h1-mobile": ["Geist"],
+                    "h2": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "h3": ["Geist"],
+                    "h1": ["Geist"],
+                    "mono": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "label": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h1-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel {
+            background: rgba(32, 31, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(144, 143, 160, 0.2);
+        }
+        .active-pip::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 16px;
+            width: 3px;
+            background-color: #c0c1ff;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary selection:text-on-primary overflow-hidden">
+<!-- Sidebar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full w-60 border-r border-outline-variant bg-background flex flex-col py-24 z-50">
+<div class="px-24 mb-32 flex items-center gap-12">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</div>
+<div>
+<h2 class="font-h2 text-h2 font-bold text-on-background">Relay</h2>
+<p class="font-label text-label opacity-60">Premium Messaging</p>
+</div>
+</div>
+<nav class="flex-1 space-y-4 px-12">
+<!-- Nav Item: Dashboard -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-on-surface">dashboard</span>
+<span class="font-label text-label">Dashboard</span>
+</a>
+<!-- Nav Item: Send Message -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-on-surface">send</span>
+<span class="font-label text-label">Send Message</span>
+</a>
+<!-- Nav Item: Bulk Messaging -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-on-surface">message</span>
+<span class="font-label text-label">Bulk Messaging</span>
+</a>
+<!-- Nav Item: Templates (ACTIVE) -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg bg-surface-container-highest text-primary font-bold border-r-2 border-primary active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-label text-label">Templates</span>
+</a>
+<!-- Nav Item: History -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-on-surface">history</span>
+<span class="font-label text-label">History</span>
+</a>
+<!-- Nav Item: Providers -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-on-surface">hub</span>
+<span class="font-label text-label">Providers</span>
+</a>
+<!-- Nav Item: API Keys -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-on-surface">vpn_key</span>
+<span class="font-label text-label">API Keys</span>
+</a>
+<!-- Nav Item: Settings -->
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-on-surface">settings</span>
+<span class="font-label text-label">Settings</span>
+</a>
+</nav>
+<div class="px-12 mt-24">
+<button class="w-full py-12 rounded-lg bg-primary text-on-primary font-label text-label font-bold flex items-center justify-center gap-8 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Broadcast
+            </button>
+</div>
+<div class="mt-auto px-12 pt-24 border-t border-outline-variant">
+<a class="flex items-center gap-12 px-12 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 group" href="#">
+<img class="w-8 h-8 rounded-full" data-alt="Close up portrait of a professional modern creative worker, studio lighting, high resolution photography, clean background, neutral expression, soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuWyFBqR5DRL-OyPMreKobGNHLJobt-sPpwA6QlGhRL0xJoPJPnsSxVv45USF5Y1oothBLV9ZhXm6v3t8JUyD2sP1qV0sYSvpKUOe7DwiDntK7s5O_HRa6vk8hTSCRRH7pWRCaXYPZ5sbO3F62icnUH2q-3PxYkcq5XOcoByb6Rv9jqMSMQdZ2Yw9JeAsWRSAwnllvc3AR_4MTsQA8qfcElV3sRm7Bucj-eG49XtHD4loDDBJzXWLqHY1ZKvsBK4z1_YzYqFoe6o67"/>
+<div class="flex-1 overflow-hidden">
+<p class="font-label text-label truncate">User Profile</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline">more_vert</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-outline-variant bg-background flex justify-between items-center px-32 z-40">
+<div class="flex items-center gap-16 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary rounded-lg">
+<span class="material-symbols-outlined absolute left-12 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-40 pr-16 py-8 text-on-surface font-label text-label focus:ring-0" placeholder="Search templates..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-24">
+<div class="flex items-center gap-8 px-12 py-6 rounded bg-surface-container-high border border-outline-variant">
+<span class="font-label text-label text-on-surface-variant">Filter:</span>
+<select class="bg-transparent border-none p-0 text-label font-label font-bold text-primary focus:ring-0 cursor-pointer">
+<option value="all">All Channels</option>
+<option value="email">Email</option>
+<option value="sms">SMS</option>
+<option value="whatsapp">WhatsApp</option>
+</select>
+</div>
+<div class="flex gap-16">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-60 pt-16 h-screen overflow-y-auto bg-surface-dim">
+<div class="max-w-[1440px] mx-auto p-32">
+<div class="flex justify-between items-end mb-32">
+<div>
+<div class="flex items-center gap-8 mb-4">
+<h1 class="font-h1 text-h1 text-on-background">Message Templates</h1>
+<span class="px-8 py-2 rounded-full bg-primary/10 text-primary font-mono text-[11px] border border-primary/20">24 TOTAL</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl">
+                        Manage and deploy consistent messaging across all channels. Use variables for personalization and track template performance.
+                    </p>
+</div>
+<button class="bg-primary text-on-primary font-label text-label font-bold px-24 py-12 rounded-lg hover:brightness-110 active:scale-95 transition-all flex items-center gap-8">
+<span class="material-symbols-outlined">add_circle</span>
+                    Create Template
+                </button>
+</div>
+<!-- Templates Table -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container border-b border-outline-variant">
+<tr>
+<th class="px-24 py-16 font-mono text-label text-on-surface-variant uppercase tracking-wider">Template Name &amp; Info</th>
+<th class="px-24 py-16 font-mono text-label text-on-surface-variant uppercase tracking-wider">Channel</th>
+<th class="px-24 py-16 font-mono text-label text-on-surface-variant uppercase tracking-wider">Last Modified</th>
+<th class="px-24 py-16 font-mono text-label text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-24 py-16 font-mono text-label text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-high/50 transition-colors group">
+<td class="px-24 py-20">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-on-surface mb-1 group-hover:text-primary transition-colors">Onboarding Welcome</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sent to users immediately after verification.</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<div class="flex items-center gap-8 text-on-surface">
+<span class="material-symbols-outlined text-secondary">mail</span>
+<span class="font-label text-label">Email</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<span class="font-mono text-label text-on-surface-variant">Oct 24, 2023</span>
+</td>
+<td class="px-24 py-20">
+<span class="inline-flex items-center px-8 py-2 rounded-full bg-emerald-500/10 text-emerald-400 text-[11px] font-bold border border-emerald-500/20">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-6"></span>
+                                    ACTIVE
+                                </span>
+</td>
+<td class="px-24 py-20 text-right">
+<div class="flex items-center justify-end gap-12">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-4" onclick="openPreview('Onboarding Welcome', 'email')">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+<span class="font-label text-label">Preview</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-high/50 transition-colors group">
+<td class="px-24 py-20">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-on-surface mb-1 group-hover:text-primary transition-colors">OTP Verification Code</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">2FA verification codes for login flows.</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<div class="flex items-center gap-8 text-on-surface">
+<span class="material-symbols-outlined text-tertiary">sms</span>
+<span class="font-label text-label">SMS</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<span class="font-mono text-label text-on-surface-variant">Nov 02, 2023</span>
+</td>
+<td class="px-24 py-20">
+<span class="inline-flex items-center px-8 py-2 rounded-full bg-emerald-500/10 text-emerald-400 text-[11px] font-bold border border-emerald-500/20">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-6"></span>
+                                    ACTIVE
+                                </span>
+</td>
+<td class="px-24 py-20 text-right">
+<div class="flex items-center justify-end gap-12">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-4" onclick="openPreview('OTP Verification Code', 'sms')">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+<span class="font-label text-label">Preview</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-high/50 transition-colors group">
+<td class="px-24 py-20">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-on-surface mb-1 group-hover:text-primary transition-colors">Password Reset Request</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Link-based recovery for account access.</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<div class="flex items-center gap-8 text-on-surface">
+<span class="material-symbols-outlined text-secondary">mail</span>
+<span class="font-label text-label">Email</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<span class="font-mono text-label text-on-surface-variant">Oct 28, 2023</span>
+</td>
+<td class="px-24 py-20">
+<span class="inline-flex items-center px-8 py-2 rounded-full bg-outline-variant/20 text-on-surface-variant text-[11px] font-bold border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant mr-6"></span>
+                                    DRAFT
+                                </span>
+</td>
+<td class="px-24 py-20 text-right">
+<div class="flex items-center justify-end gap-12">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-4" onclick="openPreview('Password Reset Request', 'email')">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+<span class="font-label text-label">Preview</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-high/50 transition-colors group">
+<td class="px-24 py-20">
+<div class="flex flex-col">
+<span class="font-h3 text-h3 text-on-surface mb-1 group-hover:text-primary transition-colors">Order Shipped Alert</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tracking info and delivery estimate update.</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<div class="flex items-center gap-8 text-on-surface">
+<span class="material-symbols-outlined text-emerald-400">forum</span>
+<span class="font-label text-label">WhatsApp</span>
+</div>
+</td>
+<td class="px-24 py-20">
+<span class="font-mono text-label text-on-surface-variant">Nov 10, 2023</span>
+</td>
+<td class="px-24 py-20">
+<span class="inline-flex items-center px-8 py-2 rounded-full bg-emerald-500/10 text-emerald-400 text-[11px] font-bold border border-emerald-500/20">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-6"></span>
+                                    ACTIVE
+                                </span>
+</td>
+<td class="px-24 py-20 text-right">
+<div class="flex items-center justify-end gap-12">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-4" onclick="openPreview('Order Shipped Alert', 'whatsapp')">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+<span class="font-label text-label">Preview</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="mt-24 flex items-center justify-between">
+<p class="font-label text-label text-on-surface-variant">Showing 1 to 4 of 24 templates</p>
+<div class="flex gap-8">
+<button class="px-12 py-8 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="px-16 py-8 rounded-lg bg-surface-container-highest text-primary font-bold">1</button>
+<button class="px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high">2</button>
+<button class="px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high">3</button>
+<button class="px-12 py-8 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Preview Modal -->
+<div class="fixed inset-0 z-[100] hidden items-center justify-center p-32" id="preview-modal">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-background/80 backdrop-blur-md" onclick="closePreview()"></div>
+<!-- Modal Content -->
+<div class="relative w-full max-w-2xl bg-surface-container border border-outline-variant rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<div class="flex items-center justify-between p-24 border-b border-outline-variant">
+<div>
+<h3 class="font-h3 text-h3 text-on-background" id="modal-title">Preview Template</h3>
+<p class="font-label text-label text-on-surface-variant" id="modal-subtitle">Rendered with test data</p>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest transition-colors" onclick="closePreview()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-32 bg-surface-container-lowest">
+<!-- Device Frame Sim -->
+<div class="max-w-md mx-auto border border-outline-variant rounded-xl overflow-hidden bg-white text-gray-900 font-sans shadow-lg" id="preview-container">
+<!-- Dynamic Preview Content -->
+<div class="hidden" id="email-preview">
+<div class="bg-indigo-600 p-24 flex justify-between items-center">
+<span class="text-white font-bold tracking-tighter text-xl">RELAY</span>
+<span class="text-indigo-100 text-xs">Transactional Email</span>
+</div>
+<div class="p-24 bg-white">
+<h2 class="text-2xl font-bold text-gray-800 mb-16">Welcome aboard, Alex!</h2>
+<p class="text-gray-600 mb-24 leading-relaxed">We're thrilled to have you join our premium messaging platform. Start exploring your new workspace and connect with your team instantly.</p>
+<a class="inline-block bg-indigo-600 text-white font-bold px-24 py-12 rounded-lg no-underline mb-24" href="#">Get Started Now</a>
+<p class="text-xs text-gray-400">Sent to alex.miller@example.com. You are receiving this because you signed up for Relay.</p>
+</div>
+</div>
+<div class="hidden p-16" id="sms-preview">
+<div class="bg-gray-100 rounded-2xl p-16 border border-gray-200 inline-block max-w-[85%]">
+<p class="text-sm">Your Relay verification code is: <strong class="text-indigo-600">882-104</strong>. It will expire in 5 minutes. Do not share this with anyone.</p>
+</div>
+<p class="text-[10px] text-gray-400 mt-8 ml-8">Sent via SMS • 10:42 AM</p>
+</div>
+<div class="hidden" id="whatsapp-preview">
+<div class="h-12 bg-emerald-600" data-alt="Subtle WhatsApp chat background pattern with doodle icons on a light cream background, minimalist and professional." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA9rUx2rqjtH9tvaCLlHICxehN8tqv1pqMzwETz-BbT0iKSvQp9T1BaYZbT408VoW5-lEafcSMU2ooXfsxUaxw6PT61yw_X0T_A_vRXbuI6Zag5vw1LUhgoz4Zf2eqRGVMl-FI9g7pvFV8DW8xIwPyTbjRXVFDiA-aoMTMpttD77QwhFziZjvBO_RqUXs1eNF1Yx8-hQX-6MOgAu7Wxp1f10Zr4aLbuIdRqPbtsudvhKHaDvQ01J9q2EeGza4X5TeQOKUeQDwivgu6B')"></div>
+<div class="p-16">
+<div class="bg-[#DCF8C6] p-12 rounded-lg shadow-sm border border-emerald-100 relative">
+<h4 class="font-bold text-emerald-900 text-xs mb-4">Relay System Update</h4>
+<p class="text-sm text-gray-800">Hi Alex! 👋 Great news: your order <strong>#RL-8821</strong> has been shipped. You can track your package here: <u>relay.io/track/8821</u></p>
+<span class="block text-right text-[10px] text-emerald-600 mt-4">10:44 AM ✓✓</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-24 bg-surface-container flex justify-between items-center border-t border-outline-variant">
+<div class="flex items-center gap-12">
+<span class="font-mono text-label text-on-surface-variant uppercase">Test Environment:</span>
+<div class="flex -space-x-8">
+<img class="w-8 h-8 rounded-full border-2 border-surface-container shadow-sm" data-alt="Avatar of a male user, professional look, soft lighting, profile photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnSTcGPKQ_bZc2-6geiAlo25YofJZ8sWdrwqXjqaQybQJF_spKerDxSrt4Q-5Ns2uim9pyurANLbf9xp9wWSsH-K0fdP49vMxPpnuaW_2dKqEA3eeVx3T5hjCtIhMxOasVBhCaT-oY2Or-tck2bbIvMbOG75Yid7awgql-Mfn2eb6ULPmwixR48_4ul12tpvsiBSrV5fiGbrynwme6nwT0QXPP0VX5iHMR1up-Foc0qN99Y_N1oqB-23g8wfSkCiG9-6BDSm14HMhC"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface-container shadow-sm" data-alt="Avatar of a female user, professional look, studio lighting, profile photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd1teKD4jbXupM7uzAZW8IogvIITd8c04YSGmxpCDn_nl-QCRgY9ys4nHKNWmYO5yntzRfSlZbYATcTNmYUrUwDa2vcnaNorFYeD2-7GUgspWLeSe8NpofloqQbxcLurzdW5h0AQJR7RGLzk9zbHaIUoh6589Lbsjyj4w3pAnBgC6UZnzn7ubSlHTwhRAC_l4mU0z1gPj1A5R8MruNbeMLIiD_Iqu7VPMemrW-EaFfnVG1vUo4iFcA9t8Hc8v7uxPTjHGR96czOULR"/>
+</div>
+</div>
+<div class="flex gap-16">
+<button class="px-16 py-8 rounded-lg border border-outline-variant text-on-surface font-label text-label hover:bg-surface-container-high">
+                        Copy JSON
+                    </button>
+<button class="px-24 py-8 rounded-lg bg-primary text-on-primary font-label text-label font-bold" onclick="closePreview()">
+                        Done
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+        function openPreview(name, channel) {
+            const modal = document.getElementById('preview-modal');
+            const title = document.getElementById('modal-title');
+            const emailPrev = document.getElementById('email-preview');
+            const smsPrev = document.getElementById('sms-preview');
+            const whatsappPrev = document.getElementById('whatsapp-preview');
+
+            title.innerText = name;
+            
+            // Hide all
+            emailPrev.classList.add('hidden');
+            smsPrev.classList.add('hidden');
+            whatsappPrev.classList.add('hidden');
+
+            // Show selected
+            if (channel === 'email') emailPrev.classList.remove('hidden');
+            if (channel === 'sms') smsPrev.classList.remove('hidden');
+            if (channel === 'whatsapp') whatsappPrev.classList.remove('hidden');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            const modal = document.getElementById('preview-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        // Global keydown for modal
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePreview();
+        });
+    </script>
+</body></html>

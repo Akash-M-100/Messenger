@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relay | Send Message</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-indicator {
+            box-shadow: inset -2px 0 0 0 #c0c1ff;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131315;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353437;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #464554;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "inverse-on-surface": "#313032",
+                        "on-secondary-fixed-variant": "#004c6e",
+                        "primary-fixed": "#e1e0ff",
+                        "on-primary-container": "#0d0096",
+                        "surface-tint": "#c0c1ff",
+                        "on-surface": "#e5e1e4",
+                        "inverse-primary": "#494bd6",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-background": "#e5e1e4",
+                        "tertiary-fixed": "#ffdcc5",
+                        "on-primary-fixed": "#07006c",
+                        "on-error": "#690005",
+                        "surface": "#131315",
+                        "secondary-container": "#00a2e6",
+                        "primary": "#c0c1ff",
+                        "surface-container-low": "#1c1b1d",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#89ceff",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "on-secondary": "#00344d",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-container": "#452000",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-high": "#2a2a2c",
+                        "secondary": "#89ceff",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-container-highest": "#353437",
+                        "tertiary-container": "#d97721",
+                        "surface-bright": "#39393b",
+                        "on-tertiary": "#4f2500",
+                        "outline": "#908fa0",
+                        "background": "#131315",
+                        "outline-variant": "#464554",
+                        "on-secondary-container": "#00344e",
+                        "surface-dim": "#131315",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#c7c4d7",
+                        "secondary-fixed": "#c9e6ff",
+                        "inverse-surface": "#e5e1e4",
+                        "tertiary": "#ffb783",
+                        "surface-container-lowest": "#0e0e10",
+                        "surface-container": "#201f22",
+                        "surface-variant": "#353437",
+                        "on-primary": "#1000a9",
+                        "primary-container": "#8083ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label": ["Geist"],
+                        "h3": ["Geist"],
+                        "h1": ["Geist"],
+                        "body-sm": ["Inter"],
+                        "mono": ["JetBrains Mono"],
+                        "h2": ["Geist"]
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-lg antialiased">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-60 border-r border-outline-variant bg-background flex flex-col py-8 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-xl">hub</span>
+</div>
+<div>
+<h1 class="font-h3 text-h3 font-bold text-on-background">Relay</h1>
+<p class="font-label text-label text-on-surface-variant opacity-70">Premium Messaging</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active: Send Message -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label bg-surface-container-highest text-primary font-bold border-r-2 border-primary transition-transform duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">send</span>
+                Send Message
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">message</span>
+                Bulk Messaging
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+                Templates
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+                History
+            </a>
+<div class="pt-4 pb-2 px-3 text-[10px] uppercase tracking-widest text-outline font-bold">Infrastructure</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">hub</span>
+                Providers
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">vpn_key</span>
+                API Keys
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full bg-primary-container text-on-primary-container font-label text-label py-3 rounded-lg flex items-center justify-center gap-2 font-bold hover:brightness-110 transition-all">
+<span class="material-symbols-outlined">add</span>
+                New Broadcast
+            </button>
+<div class="mt-6 border-t border-outline-variant pt-6">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-label text-label text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+                    User Profile
+                </a>
+</div>
+</div>
+</aside>
+<!-- Top Navigation -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-outline-variant bg-background/80 backdrop-blur-md flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4">
+<div class="flex items-center text-on-surface-variant font-label text-label gap-2">
+<span class="hover:text-on-surface cursor-pointer">Communications</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Send Broadcast</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-background"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">help_outline</span>
+<div class="w-8 h-8 rounded-full border border-outline-variant bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A hyper-realistic studio portrait of a modern software engineer in their 30s with short dark hair and clear glasses. The lighting is cinematic, highlighting the facial features against a dark, minimalist tech background. The overall aesthetic is professional, sophisticated, and aligns with a dark-mode corporate design system using deep indigo and charcoal tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRmZdZ5c7tmA-77Wlc61Iy1iXL2NXtsvijnjc4fYp1ozzIL5LBoh6-QcRHAeMMm4IDwyhHqulHZd0Id4N3FOqo6LmDjtcuNkgR3jttkAlQCkEJbUGNCWKN3NJuZ06-qNMswmwk5uv2IAccwLTqla55ArMkmfE5yvydWRs_oVKeRPCKlH_09tfsuA8xwBbLN8kXHarAyEngs_tU09d0pJvnT4B73tQ-QQRA4_03zMSZGS-AmDEYj1kQ1Mejr9cjB7ZcTD1Wv1OzCTsM"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-60 pt-24 pb-8 px-8 min-h-screen">
+<div class="max-w-7xl mx-auto">
+<!-- Page Header & Steps -->
+<div class="mb-10 flex items-center justify-between">
+<div>
+<h2 class="font-h1 text-h1 text-on-background mb-1">Send Message</h2>
+<p class="text-on-surface-variant text-body-sm">Initiate a new single or template-based communication across any provider.</p>
+</div>
+<div class="flex items-center gap-4 bg-surface-container rounded-full px-6 py-3 border border-outline-variant">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center font-label text-[10px] font-bold">1</div>
+<span class="font-label text-label text-on-surface-variant">Select Channel</span>
+</div>
+<div class="w-8 h-px bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-label text-[10px] font-bold">2</div>
+<span class="font-label text-label text-on-surface font-semibold">Message Details</span>
+</div>
+<div class="w-8 h-px bg-outline-variant"></div>
+<div class="flex items-center gap-2 opacity-50">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-label text-[10px] font-bold">3</div>
+<span class="font-label text-label text-on-surface-variant">Review</span>
+</div>
+</div>
+</div>
+<!-- Content Grid: Form vs Preview -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Form Section -->
+<div class="lg:col-span-7 space-y-8">
+<!-- Channel Selection -->
+<section>
+<h3 class="font-label text-label text-on-surface-variant uppercase tracking-widest mb-4 font-bold">Messaging Channel</h3>
+<div class="grid grid-cols-4 gap-4">
+<button class="flex flex-col items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-outline transition-all bg-surface-container-low group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">mail</span>
+<span class="font-label text-[11px] text-on-surface-variant">Email</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-outline transition-all bg-surface-container-low group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">sms</span>
+<span class="font-label text-[11px] text-on-surface-variant">SMS</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-primary bg-primary/10 shadow-[0_0_20px_-10px_rgba(192,193,255,0.5)]">
+<span class="material-symbols-outlined text-primary font-bold">chat</span>
+<span class="font-label text-[11px] text-primary font-bold">WhatsApp</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-outline transition-all bg-surface-container-low group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">record_voice_over</span>
+<span class="font-label text-[11px] text-on-surface-variant">Voice</span>
+</button>
+</div>
+</section>
+<!-- Form Section Card -->
+<div class="bg-surface border border-outline-variant rounded-xl p-8 space-y-8 shadow-sm">
+<!-- Recipient Section -->
+<div class="space-y-4">
+<label class="font-label text-label font-bold text-on-surface block">Recipient Number</label>
+<div class="flex gap-2">
+<div class="w-32">
+<div class="relative group">
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-body-sm font-label appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all">
+<option>US +1</option>
+<option>UK +44</option>
+<option>DE +49</option>
+<option>IN +91</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<input class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-body-sm font-mono placeholder:text-outline-variant focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Enter mobile number" type="text"/>
+</div>
+</div>
+<!-- Template Selection -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<label class="font-label text-label font-bold text-on-surface">WhatsApp Template</label>
+<span class="font-label text-[10px] text-primary cursor-pointer hover:underline uppercase">Manage Templates</span>
+</div>
+<div class="relative">
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-body-sm font-label appearance-none focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" id="templateSelect">
+<option disabled="" selected="" value="">Select a pre-approved template</option>
+<option value="welcome">welcome_user_v2 (Standard)</option>
+<option value="delivery">delivery_update_tracking (Transaction)</option>
+<option value="otp">auth_verification_otp (Secure)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Dynamic Variables (Visible when template is selected) -->
+<div class="p-6 bg-surface-container-lowest rounded-lg border border-outline-variant border-dashed space-y-6" id="variablesContainer">
+<h4 class="font-label text-label text-primary font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">variables</span>
+                                Dynamic Variables
+                            </h4>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label text-[11px] text-on-surface-variant uppercase font-bold tracking-wider">Variable {{1}}</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-body-sm font-mono focus:ring-2 focus:ring-primary outline-none" type="text" value="Alexander"/>
+</div>
+<div class="space-y-2">
+<label class="font-label text-[11px] text-on-surface-variant uppercase font-bold tracking-wider">Variable {{2}}</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-body-sm font-mono focus:ring-2 focus:ring-primary outline-none" type="text" value="Premium Pro"/>
+</div>
+</div>
+</div>
+<!-- Media Upload -->
+<div class="space-y-4">
+<label class="font-label text-label font-bold text-on-surface">Media Attachment <span class="font-normal text-on-surface-variant text-[11px] ml-1">(Optional)</span></label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-10 flex flex-col items-center justify-center gap-3 hover:bg-surface-container-low transition-all cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-primary group-hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">upload_file</span>
+</div>
+<div class="text-center">
+<p class="font-label text-label text-on-surface font-semibold">Drop image, video, or PDF here</p>
+<p class="font-label text-[11px] text-on-surface-variant mt-1">Max file size 16MB. Supported: .jpg, .png, .mp4, .pdf</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex items-center justify-between pt-4">
+<button class="px-6 py-3 rounded-lg border border-outline-variant font-label text-label font-bold text-on-surface-variant hover:bg-surface-container-high transition-all">
+                            Save as Draft
+                        </button>
+<div class="flex gap-4">
+<button class="px-8 py-3 rounded-lg border border-primary text-primary font-label text-label font-bold hover:bg-primary/5 transition-all">
+                                Preview
+                            </button>
+<button class="px-10 py-3 rounded-lg bg-primary text-on-primary font-label text-label font-bold shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all">
+                                Send Broadcast
+                            </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Preview Pane -->
+<div class="lg:col-span-5 sticky top-24 h-fit">
+<div class="relative mx-auto w-[320px] aspect-[9/18.5] bg-[#09090b] rounded-[3rem] border-[8px] border-surface-container-highest shadow-2xl p-4 overflow-hidden">
+<!-- Phone Notch -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-surface-container-highest rounded-b-2xl z-10"></div>
+<!-- Screen Header -->
+<div class="flex items-center justify-between pt-6 px-2 mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">arrow_back</span>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest">
+<img class="w-full h-full object-cover rounded-full" data-alt="A minimalist logo for a messaging platform, designed as a clean geometric icon. The logo is rendered in a modern tech aesthetic with sharp white lines on a deep indigo circular background. The style is inspired by premium SaaS branding, simple yet powerful." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXWoq2cE31SGR-LZ6KBhpPvIx7_vH8zjWdTkHJSrAhVAln_ySahfOC-LKRURL3ReMw00NoTs49fQknY5mEbgOjRjZu1aCbxFuSFibuSG12y9IlYlj_9u1pvYIHQk4ERRpDWRSzF1kzw4_HhSPsETlOkUCMmlMKD6U2m_FNnQTJjXfO24yFzpO6-U0Z5SznufuNsGFIDrVfjMyy5dJsd6MjhREcHHJH0KR8n35Rq9HblJyxILK7vY3RGE7nYcFXYHP_1Htpr0YbFYDB"/>
+</div>
+<div>
+<p class="text-[10px] font-bold leading-tight">Relay Workspace</p>
+<p class="text-[8px] text-primary leading-tight">Business Account</p>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">videocam</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">call</span>
+</div>
+</div>
+<!-- Chat Area -->
+<div class="flex flex-col h-full bg-[#0b141a] p-3 -mx-4">
+<div class="flex-1 space-y-4 pt-4 overflow-y-auto">
+<div class="mx-auto bg-[#182229] text-[9px] text-on-surface-variant px-3 py-1 rounded-md w-fit font-label">TODAY</div>
+<!-- WhatsApp Message Bubble -->
+<div class="bg-[#202c33] rounded-lg rounded-tl-none p-3 max-w-[85%] relative self-start border border-white/5">
+<div class="w-full h-32 rounded bg-surface-container mb-3 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-quality 3D render of a futuristic digital interface showing messaging metrics and data visualization. The image is clean, sharp, and modern, using a color palette of vibrant blue, soft purple, and deep grays. It feels like a high-end marketing visual for an enterprise communication platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_2cEHHC90Hpd1z1XuTQG7L1-SAXGOybpoFW1oDW952-6R_mDrnFq1zBaC-hduwrhIvyDPbS5w_fly1fEgEU4pIB8c8FyXSy5QVcDoEL2paDwBjs7N11aHQMsjpfroxPz2yLz0OwzqS2bwIyhcs9AtU272pjDwujNM4yd5llMpMiz_jXQsoVpdKRGMoz4Vi7ssxFK3r3ydhSrThaa8hrqGC-2xBPI_biZjNYA5-mbuXVwvV5GQEJmBKvH_VidzyGPm_McXEsc3qfL4"/>
+</div>
+<h5 class="text-[11px] font-bold text-[#c0c1ff] mb-1">Welcome aboard, Alexander! 👋</h5>
+<p class="text-[11px] leading-relaxed text-on-surface">
+                                        Thank you for upgrading to the <span class="text-[#c0c1ff] font-bold">Premium Pro</span> plan. Your new workspace is now ready for high-performance messaging.
+                                    </p>
+<p class="text-[11px] mt-2 leading-relaxed text-on-surface">
+                                        Tap the button below to complete your workspace setup.
+                                    </p>
+<div class="text-[8px] text-on-surface-variant text-right mt-1">12:44 PM ✓✓</div>
+<!-- CTAs -->
+<div class="mt-4 border-t border-white/10 pt-2 space-y-2">
+<button class="w-full py-2 bg-transparent text-primary text-[10px] font-bold text-center border-b border-white/10">Complete Setup</button>
+<button class="w-full py-2 bg-transparent text-on-surface-variant text-[10px] font-medium text-center">Contact Support</button>
+</div>
+</div>
+</div>
+<!-- Input Bar Mockup -->
+<div class="mt-auto pt-4 pb-12 flex items-center gap-2 px-2">
+<div class="flex-1 bg-[#2a3942] rounded-full px-4 py-2 flex items-center justify-between">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">sentiment_satisfied</span>
+<span class="text-[10px] text-on-surface-variant mr-auto ml-2">Message</span>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">attach_file</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">photo_camera</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]">mic</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Preview Status -->
+<div class="mt-6 text-center">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full border border-outline-variant">
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Live Preview Sync Active</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for the form
+        const templateSelect = document.getElementById('templateSelect');
+        const variablesContainer = document.getElementById('variablesContainer');
+
+        templateSelect.addEventListener('change', () => {
+            variablesContainer.classList.add('scale-[1.01]', 'brightness-125');
+            setTimeout(() => {
+                variablesContainer.classList.remove('scale-[1.01]', 'brightness-125');
+            }, 200);
+        });
+
+        // Hover effect for navigation items
+        document.querySelectorAll('nav a').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                if (!item.classList.contains('bg-surface-container-highest')) {
+                    item.style.transform = 'translateX(4px)';
+                }
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body></html>

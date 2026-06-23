@@ -253,6 +253,7 @@
   </div>
 
   <script>
+    alert("INDEX VERSION 2");
     function toggleForm(formType) {
       const signupForm = document.getElementById('signup-form');
       const loginForm = document.getElementById('login-form');
@@ -308,13 +309,18 @@
           throw new Error(data.message || 'Signup failed');
         }
 
-        showMessage('signup', 'Account created successfully! Check your email for a welcome message.', false);
-        form.reset();
-        
-        // Clear after 3 seconds
-        setTimeout(() => {
-          document.getElementById('signup-message').innerHTML = '';
-        }, 3000);
+        showMessage(
+  'signup',
+  'Account created successfully! Please login.',
+  false
+);
+
+form.reset();
+
+setTimeout(() => {
+  toggleForm('login');
+}, 1500);
+
       } catch (error) {
         showMessage('signup', error.message, true);
       } finally {
@@ -349,13 +355,26 @@
           throw new Error(data.message || 'Login failed');
         }
 
-        showMessage('login', 'Login successful! Check your email for a login confirmation.', false);
-        form.reset();
-        
-        // Clear after 3 seconds
-        setTimeout(() => {
-          document.getElementById('login-message').innerHTML = '';
-        }, 3000);
+       alert("MY NEW CODE IS RUNNING");
+      console.log("LOGIN RESPONSE:", data);
+
+showMessage(
+  'login',
+  'Login successful! Redirecting...',
+  false
+);
+
+localStorage.setItem(
+  "user",
+  JSON.stringify(data.data)
+);
+
+console.log("ABOUT TO REDIRECT");
+
+setTimeout(() => {
+  console.log("REDIRECT NOW");
+  window.location.href = "/relay/dashboard.html";
+}, 1000);
       } catch (error) {
         showMessage('login', error.message, true);
       } finally {

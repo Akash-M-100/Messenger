@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relay | Message History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #464554;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #908fa0;
+        }
+        .sheet-overlay {
+            backdrop-filter: blur(4px);
+            transition: opacity 0.3s ease;
+        }
+        .sheet-content {
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sheet-active .sheet-content {
+            transform: translateX(0);
+        }
+        .sheet-active .sheet-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#131315",
+                        "on-primary-fixed": "#07006c",
+                        "on-primary-container": "#0d0096",
+                        "tertiary-container": "#d97721",
+                        "on-background": "#e5e1e4",
+                        "primary": "#c0c1ff",
+                        "secondary": "#89ceff",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#353437",
+                        "outline-variant": "#464554",
+                        "tertiary-fixed": "#ffdcc5",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary-fixed-dim": "#89ceff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "tertiary": "#ffb783",
+                        "surface-bright": "#39393b",
+                        "surface-tint": "#c0c1ff",
+                        "on-surface": "#e5e1e4",
+                        "on-tertiary": "#4f2500",
+                        "inverse-surface": "#e5e1e4",
+                        "secondary-fixed": "#c9e6ff",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-secondary": "#00344d",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-primary": "#1000a9",
+                        "primary-container": "#8083ff",
+                        "surface-container-high": "#2a2a2c",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#494bd6",
+                        "surface-container-low": "#1c1b1d",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container": "#201f22",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface": "#131315",
+                        "inverse-on-surface": "#313032",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-dim": "#131315",
+                        "on-secondary-container": "#00344e",
+                        "secondary-container": "#00a2e6",
+                        "outline": "#908fa0",
+                        "on-tertiary-container": "#452000",
+                        "surface-container-highest": "#353437",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-secondary-fixed-variant": "#004c6e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "8": "0.5rem",
+                        "16": "1rem",
+                        "4": "0.25rem",
+                        "64": "4rem",
+                        "24": "1.5rem",
+                        "32": "2rem",
+                        "48": "3rem"
+                    },
+                    "fontFamily": {
+                        "label": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "h1-mobile": ["Geist"],
+                        "h2": ["Geist"],
+                        "body-sm": ["Inter"],
+                        "h3": ["Geist"],
+                        "h1": ["Geist"],
+                        "mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "label": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "h1-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-sm selection:bg-primary selection:text-on-primary">
+<!-- Shell Layout -->
+<div class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-60 border-r border-outline-variant bg-background flex flex-col py-8 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<div>
+<h2 class="font-h2 text-h3 font-bold text-on-background">Relay</h2>
+<p class="text-[10px] uppercase tracking-widest text-outline">Premium Messaging</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<!-- Nav Items mapping from JSON -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded group" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label text-label">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded group" href="#">
+<span class="material-symbols-outlined text-[20px]">send</span>
+<span class="font-label text-label">Send Message</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded group" href="#">
+<span class="material-symbols-outlined text-[20px]">message</span>
+<span class="font-label text-label">Bulk Messaging</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded group" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label text-label">Templates</span>
+</a>
+<!-- Active Item: History -->
+<a class="flex items-center gap-3 px-3 py-2 bg-surface-container-highest text-primary font-bold border-r-2 border-primary rounded transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label text-label">History</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded group" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="font-label text-label">Providers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded group" href="#">
+<span class="material-symbols-outlined text-[20px]">vpn_key</span>
+<span class="font-label text-label">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded group" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label text-label">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-4 space-y-4">
+<button class="w-full bg-primary text-on-primary font-label text-label py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Broadcast
+                </button>
+<div class="pt-4 border-t border-outline-variant flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of a technology workspace administrator, clean lighting, sharp focus, wearing minimalist modern professional attire, against a soft-focus tech office background in dark mode tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1vSRVXa3pD8XetQ17RlXh99mFQgK7F_1X5N5FjYk41l6xx7C3UaXArJ9pcNKGmNVl7tsm94L5f_iiL7bgeFQQPg_1XIQFBTEFHi1OIwPR4T3hhqptTn1Ex3eNVLUxGHeB6Ax086lvUwQWhuQEVRJLBolfvdjpgkP_3Ig6rdSeSAjDFKVy1dC6fC3eGAOjrUf767ihLMOV3R-Ub6LogjXaLLVaJhI_Xrjru-pg6Hbo-UILQMYR0bymH1K2I8DHUOwOSfhoCHMq1eMM"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-label text-label text-on-surface truncate">Alex Chen</p>
+<p class="text-[10px] text-outline truncate">alex@relay.io</p>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px]">unfold_more</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-60 flex flex-col min-w-0">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-outline-variant bg-background/80 backdrop-blur-md flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px] group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Search message ID, recipient..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<div class="mt-16 p-8 flex-1 overflow-auto">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="font-h1 text-h1 text-on-background mb-1">Message History</h1>
+<p class="text-on-surface-variant font-body-sm">Audit logs and delivery status for all outgoing communications.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 bg-surface-container text-on-surface font-label text-label rounded-lg border border-outline-variant flex items-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export CSV
+                        </button>
+</div>
+</div>
+<!-- Filters Bento -->
+<div class="grid grid-cols-12 gap-4 mb-6">
+<div class="col-span-12 lg:col-span-3">
+<label class="font-label text-[10px] uppercase tracking-widest text-outline mb-1 block">Date Range</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">calendar_today</span>
+<select class="w-full appearance-none bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-10 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option>Last 24 Hours</option>
+<option>Last 7 Days</option>
+<option>Last 30 Days</option>
+<option>Custom Range</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3">
+<label class="font-label text-[10px] uppercase tracking-widest text-outline mb-1 block">Status</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">analytics</span>
+<select class="w-full appearance-none bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-10 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option>All Statuses</option>
+<option>Delivered</option>
+<option>Success</option>
+<option>Pending</option>
+<option>Failed</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3">
+<label class="font-label text-[10px] uppercase tracking-widest text-outline mb-1 block">Channel</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">cell_tower</span>
+<select class="w-full appearance-none bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-10 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option>All Channels</option>
+<option>SMS</option>
+<option>WhatsApp</option>
+<option>Push Notification</option>
+<option>Email</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3 flex items-end">
+<button class="w-full py-2 bg-surface-container-highest text-on-surface font-label text-label rounded-lg border border-outline-variant hover:bg-surface-variant transition-colors">
+                            Clear All Filters
+                        </button>
+</div>
+</div>
+<!-- High Density Log Table -->
+<div class="bg-surface-container-low rounded-xl border border-outline-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container border-b border-outline-variant">
+<th class="px-6 py-4 font-mono text-[11px] uppercase tracking-wider text-outline">Message ID</th>
+<th class="px-6 py-4 font-mono text-[11px] uppercase tracking-wider text-outline">Recipient</th>
+<th class="px-6 py-4 font-mono text-[11px] uppercase tracking-wider text-outline">Channel</th>
+<th class="px-6 py-4 font-mono text-[11px] uppercase tracking-wider text-outline">Status</th>
+<th class="px-6 py-4 font-mono text-[11px] uppercase tracking-wider text-outline">Provider</th>
+<th class="px-6 py-4 font-mono text-[11px] uppercase tracking-wider text-outline">Timestamp</th>
+<th class="px-6 py-4 font-mono text-[11px] uppercase tracking-wider text-outline text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="group hover:bg-surface-container transition-colors cursor-pointer" onclick="toggleSheet(true, 'msg_849201')">
+<td class="px-6 py-4 font-mono text-primary">msg_849201</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">+1 (555) 012-3456</span>
+<span class="text-[11px] text-outline">Customer #9921</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">sms</span>
+<span class="text-body-sm">SMS</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[11px] font-bold border border-secondary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
+                                        DELIVERED
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Twilio US-East</td>
+<td class="px-6 py-4 text-on-surface-variant">Oct 24, 14:22:01</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline group-hover:text-on-surface transition-colors">chevron_right</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-surface-container transition-colors cursor-pointer" onclick="toggleSheet(true, 'msg_849198')">
+<td class="px-6 py-4 font-mono text-primary">msg_849198</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">j.smith@gmail.com</span>
+<span class="text-[11px] text-outline">User ID: 00481</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">mail</span>
+<span class="text-body-sm">Email</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/20 text-primary text-[11px] font-bold border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mr-1.5"></span>
+                                        SUCCESS
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">AWS SES</td>
+<td class="px-6 py-4 text-on-surface-variant">Oct 24, 14:18:45</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline group-hover:text-on-surface transition-colors">chevron_right</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-surface-container transition-colors cursor-pointer" onclick="toggleSheet(true, 'msg_849195')">
+<td class="px-6 py-4 font-mono text-primary">msg_849195</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">+44 20 7946 0958</span>
+<span class="text-[11px] text-outline">Internal Audit</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary">chat</span>
+<span class="text-body-sm">WhatsApp</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error-container/20 text-error text-[11px] font-bold border border-error/20">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5"></span>
+                                        FAILED
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Meta Cloud API</td>
+<td class="px-6 py-4 text-on-surface-variant">Oct 24, 14:15:12</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline group-hover:text-on-surface transition-colors">chevron_right</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-surface-container transition-colors cursor-pointer" onclick="toggleSheet(true, 'msg_849190')">
+<td class="px-6 py-4 font-mono text-primary">msg_849190</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Client Node: 19</span>
+<span class="text-[11px] text-outline">Fleet Ops</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">notifications_active</span>
+<span class="text-body-sm">Push</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-highest text-outline text-[11px] font-bold border border-outline/20">
+<span class="w-1.5 h-1.5 rounded-full bg-outline mr-1.5"></span>
+                                        PENDING
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Firebase (FCM)</td>
+<td class="px-6 py-4 text-on-surface-variant">Oct 24, 14:10:59</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline group-hover:text-on-surface transition-colors">chevron_right</span>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 bg-surface-container flex items-center justify-between">
+<span class="text-label text-outline">Showing 1 to 4 of 24,812 results</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high text-outline disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-surface-container-highest text-on-surface rounded text-label font-bold border border-primary">1</button>
+<button class="px-3 py-1 hover:bg-surface-container-high text-outline rounded text-label">2</button>
+<button class="px-3 py-1 hover:bg-surface-container-high text-outline rounded text-label">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high text-outline">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Details Sheet (Slide Drawer) -->
+<div class="fixed inset-0 z-[100] flex justify-end invisible transition-all duration-300" id="detailsSheet">
+<!-- Overlay -->
+<div class="sheet-overlay absolute inset-0 bg-background/60 opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSheet(false)"></div>
+<!-- Content Panel -->
+<div class="sheet-content relative w-full max-w-lg bg-surface border-l border-outline-variant shadow-2xl flex flex-col h-full">
+<!-- Header -->
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container">
+<div>
+<h3 class="font-h3 text-h3 text-on-surface">Message Details</h3>
+<p class="font-mono text-[12px] text-primary" id="sheetMsgId">msg_849201</p>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest text-outline transition-colors" onclick="toggleSheet(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Body -->
+<div class="flex-1 overflow-y-auto p-6 space-y-8">
+<!-- Status & Timeline -->
+<section>
+<h4 class="font-label text-[10px] uppercase tracking-widest text-outline mb-4">Delivery Timeline</h4>
+<div class="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-outline-variant">
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-primary" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<p class="font-medium text-on-surface">Created</p>
+<p class="text-[11px] text-outline">Oct 24, 14:21:58 • System Trigger</p>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-primary" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<p class="font-medium text-on-surface">Sent to Provider</p>
+<p class="text-[11px] text-outline">Oct 24, 14:21:59 • Via Twilio US-East</p>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary flex items-center justify-center animate-pulse">
+<span class="material-symbols-outlined text-[10px] text-on-secondary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+</div>
+<p class="font-medium text-secondary">Delivered to Handset</p>
+<p class="text-[11px] text-outline">Oct 24, 14:22:01 • Carrier: Verizon</p>
+</div>
+</div>
+</section>
+<!-- Content -->
+<section>
+<h4 class="font-label text-[10px] uppercase tracking-widest text-outline mb-2">Message Content</h4>
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant font-body-sm text-on-surface-variant italic">
+                        "Your verification code for Relay is 882-109. This code will expire in 5 minutes. If you did not request this, please secure your account."
+                    </div>
+</section>
+<!-- Provider Logs (JSON) -->
+<section>
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-label text-[10px] uppercase tracking-widest text-outline">Provider Raw Logs</h4>
+<button class="text-[10px] text-primary hover:underline">Copy JSON</button>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant font-mono text-[11px] text-on-surface-variant overflow-x-auto">
+<pre class="whitespace-pre">{
+  "provider": "twilio",
+  "sid": "SM772b1451f28d4...",
+  "status": "delivered",
+  "direction": "outbound-api",
+  "error_code": null,
+  "segments": 1,
+  "api_version": "2010-04-01",
+  "price": "-0.0075",
+  "price_unit": "USD"
+}</pre>
+</div>
+</section>
+<!-- Metadata -->
+<section>
+<h4 class="font-label text-[10px] uppercase tracking-widest text-outline mb-3">Metadata</h4>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 bg-surface-container-high rounded-lg">
+<p class="text-[10px] text-outline mb-1">User Agent</p>
+<p class="text-label text-on-surface">Node.js/v18.1.0</p>
+</div>
+<div class="p-3 bg-surface-container-high rounded-lg">
+<p class="text-[10px] text-outline mb-1">Source IP</p>
+<p class="text-label text-on-surface">45.21.109.2</p>
+</div>
+<div class="p-3 bg-surface-container-high rounded-lg">
+<p class="text-[10px] text-outline mb-1">Retries</p>
+<p class="text-label text-on-surface">0</p>
+</div>
+<div class="p-3 bg-surface-container-high rounded-lg">
+<p class="text-[10px] text-outline mb-1">Batch ID</p>
+<p class="text-label text-on-surface">B_22910</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Action -->
+<div class="p-6 border-t border-outline-variant bg-surface-container flex gap-3">
+<button class="flex-1 py-2 bg-primary text-on-primary rounded-lg font-label text-label font-bold hover:opacity-90 transition-opacity">
+                    Resend Message
+                </button>
+<button class="px-4 py-2 bg-surface-container-highest text-on-surface rounded-lg border border-outline-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">bug_report</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+        function toggleSheet(show, id = null) {
+            const sheet = document.getElementById('detailsSheet');
+            const msgIdEl = document.getElementById('sheetMsgId');
+            
+            if (show) {
+                if (id) msgIdEl.innerText = id;
+                sheet.classList.remove('invisible');
+                // Force a reflow
+                void sheet.offsetWidth;
+                sheet.classList.add('sheet-active');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                sheet.classList.remove('sheet-active');
+                document.body.classList.remove('overflow-hidden');
+                setTimeout(() => {
+                    sheet.classList.add('invisible');
+                }, 300);
+            }
+        }
+
+        // Close on ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') toggleSheet(false);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relay | Premium Messaging Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #131315;
+            color: #e5e1e4;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(28, 27, 29, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(144, 143, 160, 0.1);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, rgba(53, 52, 55, 0) 0%, rgba(53, 52, 55, 1) 50%, rgba(53, 52, 55, 0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+        @keyframes shimmer {
+            from { background-position: -200% 0; }
+            to { background-position: 200% 0; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#131315",
+                        "on-primary-fixed": "#07006c",
+                        "on-primary-container": "#0d0096",
+                        "tertiary-container": "#d97721",
+                        "on-background": "#e5e1e4",
+                        "primary": "#c0c1ff",
+                        "secondary": "#89ceff",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#353437",
+                        "outline-variant": "#464554",
+                        "tertiary-fixed": "#ffdcc5",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary-fixed-dim": "#89ceff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "tertiary": "#ffb783",
+                        "surface-bright": "#39393b",
+                        "surface-tint": "#c0c1ff",
+                        "on-surface": "#e5e1e4",
+                        "on-tertiary": "#4f2500",
+                        "inverse-surface": "#e5e1e4",
+                        "secondary-fixed": "#c9e6ff",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-secondary": "#00344d",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-primary": "#1000a9",
+                        "primary-container": "#8083ff",
+                        "surface-container-high": "#2a2a2c",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#494bd6",
+                        "surface-container-low": "#1c1b1d",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container": "#201f22",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface": "#131315",
+                        "inverse-on-surface": "#313032",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-dim": "#131315",
+                        "on-secondary-container": "#00344e",
+                        "secondary-container": "#00a2e6",
+                        "outline": "#908fa0",
+                        "on-tertiary-container": "#452000",
+                        "surface-container-highest": "#353437",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-secondary-fixed-variant": "#004c6e"
+                    },
+                    "fontFamily": {
+                        "label": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "h1": ["Geist"],
+                        "h2": ["Geist"],
+                        "h3": ["Geist"],
+                        "mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "label": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body-lg text-on-background bg-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-60 border-r border-outline-variant bg-background flex flex-col py-8 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<div>
+<h2 class="font-h2 text-h2 font-bold text-on-background leading-none">Relay</h2>
+<span class="font-label text-label text-on-surface-variant">Premium Messaging</span>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary-container text-on-primary-container py-2.5 rounded-lg font-label text-label font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] hover:bg-opacity-90">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Broadcast
+            </button>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<!-- Active Navigation -->
+<a class="flex items-center gap-3 px-4 py-2 bg-surface-container-highest text-primary font-bold border-r-2 border-primary transition-colors duration-200 group" href="/relay/dashboard.html">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label text-label">Dashboard</span>
+</a>
+<!-- Inactive Navigations -->
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="/relay/send-message.html">
+<span class="material-symbols-outlined text-[20px]">send</span>
+<span class="font-label text-label">Send Message</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="/relay/bulk_messaging.html">
+<span class="material-symbols-outlined text-[20px]">message</span>
+<span class="font-label text-label">Bulk Messaging</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="/relay/templates.html">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label text-label">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="/relay/history.html">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-label text-label">History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="/relay/providers.html">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="font-label text-label">Providers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="/relay/api-keys.html">
+<span class="material-symbols-outlined text-[20px]">vpn_key</span>
+<span class="font-label text-label">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="/relay/settings.html">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label text-label">Settings</span>
+</a>
+</nav>
+<div class="px-2 mt-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+<span class="font-label text-label">User Profile</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-outline-variant bg-background flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-1.5 pl-10 pr-4 text-body-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all placeholder:text-on-surface-variant/50" placeholder="Search activity, IDs, or templates..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full border border-background"></span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a business executive in a modern tech office, soft cinematic lighting, shallow depth of field, high-end corporate photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtYN2kwiaFZC-HtYmTqo9OhEw9aga_sjEeBPG-qzkLkSXtUxqPXtk1i_JUt1P9YAxqXS9v5BD5OtRwhkGnFu6RBHmf7_y4iFA7i3PtpIoCY2pWQK1q4ZFm3dUSbB5Jiki3g04AKc-fYCoN3HT8A1topHQTOsRZ-Lm_MdRikOaLiVqVrgeigFl7JoHJkptKYuxKh51rVUslu9d8SxuqG0mbktsCCbEk6ENRcbRe9BwYDfk7thsDzM5mKHO5ujloL5CIjFjC_B91aj5Y"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-60 pt-24 px-8 pb-12 min-h-screen">
+<!-- Hero Section -->
+<section class="mb-12">
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-h1 text-h1 text-on-background mb-2">Welcome back, Sarah</h1>
+<p class="text-on-surface-variant max-w-lg">Your messaging infrastructure is performing at peak capacity. All systems operational across 12 global regions.</p>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low border border-outline-variant px-4 py-2 rounded-lg">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+<span class="font-label text-label text-secondary font-bold">SYSTEM STABLE</span>
+</div>
+</div>
+</section>
+<!-- Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+<!-- Stat Card 1 -->
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-on-surface-variant">TOTAL MESSAGES</span>
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div class="flex items-end gap-4">
+<div class="font-h1 text-h1">1.28M</div>
+<div class="h-10 w-20 flex items-end pb-1 overflow-hidden">
+<!-- Tiny Sparkline placeholder -->
+<div class="flex gap-0.5 items-end h-full">
+<div class="w-1 bg-primary/20 h-4"></div>
+<div class="w-1 bg-primary/20 h-6"></div>
+<div class="w-1 bg-primary/20 h-5"></div>
+<div class="w-1 bg-primary/40 h-8"></div>
+<div class="w-1 bg-primary/40 h-7"></div>
+<div class="w-1 bg-primary/60 h-10"></div>
+<div class="w-1 bg-primary h-9"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-on-surface-variant">MESSAGES TODAY</span>
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+</div>
+<div class="font-h1 text-h1 mb-1">42,903</div>
+<div class="flex items-center gap-1 text-secondary font-label text-label">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                    12.4% vs yesterday
+                </div>
+</div>
+<!-- Stat Card 3 -->
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-on-surface-variant">SUCCESS RATE</span>
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="font-h1 text-h1">99.98%</div>
+<!-- Radial Progress Mockup -->
+<div class="relative w-10 h-10">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="20" cy="20" fill="transparent" r="18" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-primary" cx="20" cy="20" fill="transparent" r="18" stroke="currentColor" stroke-dasharray="113" stroke-dashoffset="5" stroke-width="4"></circle>
+</svg>
+</div>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="glass-card p-6 rounded-xl border border-error/20 bg-error-container/5">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-error">FAILED MESSAGES</span>
+<span class="material-symbols-outlined text-error">error</span>
+</div>
+<div class="font-h1 text-h1 text-error mb-1">12</div>
+<div class="font-label text-label text-on-surface-variant">Requires immediate attention</div>
+</div>
+</section>
+<!-- Messaging Volume Chart Section -->
+<section class="mb-12">
+<div class="glass-card rounded-xl p-8 border border-outline-variant/20 overflow-hidden relative">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="font-h3 text-h3 text-on-background">Messaging Volume</h3>
+<p class="font-label text-label text-on-surface-variant">7-day rolling traffic analysis</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-surface-container-highest text-primary font-label text-label rounded">7D</button>
+<button class="px-3 py-1 text-on-surface-variant hover:bg-surface-container-high transition-colors font-label text-label rounded">30D</button>
+</div>
+</div>
+<!-- Chart Area Placeholder (Stylized CSS/SVG) -->
+<div class="w-full h-64 relative flex items-end gap-1">
+<div class="absolute inset-0 border-b border-outline-variant/30 flex flex-col justify-between">
+<div class="border-t border-outline-variant/10 w-full"></div>
+<div class="border-t border-outline-variant/10 w-full"></div>
+<div class="border-t border-outline-variant/10 w-full"></div>
+<div class="border-t border-outline-variant/10 w-full"></div>
+</div>
+<!-- Area Chart Visual -->
+<svg class="absolute bottom-0 left-0 w-full h-full preserve-3d" preserveaspectratio="none" viewbox="0 0 1000 200">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#c0c1ff" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#c0c1ff" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,150 Q100,80 200,120 T400,60 T600,100 T800,40 T1000,90 L1000,200 L0,200 Z" fill="url(#chartGradient)"></path>
+<path d="M0,150 Q100,80 200,120 T400,60 T600,100 T800,40 T1000,90" fill="none" stroke="#c0c1ff" stroke-width="3"></path>
+<!-- Data Points -->
+<circle cx="200" cy="120" fill="#c0c1ff" r="5"></circle>
+<circle cx="400" cy="60" fill="#c0c1ff" r="5"></circle>
+<circle cx="800" cy="40" fill="#c0c1ff" r="5"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-4 font-label text-label text-on-surface-variant">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+</div>
+</div>
+</section>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Recent Activity Table -->
+<div class="lg:col-span-2 glass-card rounded-xl border border-outline-variant/20">
+<div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
+<h3 class="font-h3 text-h3 text-on-background">Recent Activity</h3>
+<button class="text-primary font-label text-label hover:underline">View All History</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-3 font-label text-label text-on-surface-variant tracking-wider uppercase">Message ID</th>
+<th class="px-6 py-3 font-label text-label text-on-surface-variant tracking-wider uppercase">Recipient</th>
+<th class="px-6 py-3 font-label text-label text-on-surface-variant tracking-wider uppercase">Channel</th>
+<th class="px-6 py-3 font-label text-label text-on-surface-variant tracking-wider uppercase">Status</th>
+<th class="px-6 py-3 font-label text-label text-on-surface-variant tracking-wider uppercase">Time</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Table Row 1 -->
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-6 py-4 font-mono text-mono text-on-background">#TX-904221</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">+1 (555) 012-3456</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-[18px]">sms</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-secondary/10 text-secondary border border-secondary/20">DELIVERED</span>
+</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">2m ago</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-6 py-4 font-mono text-mono text-on-background">#TX-904220</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">mark.z@corp.com</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-primary/10 text-primary border border-primary/20">SENT</span>
+</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">5m ago</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-6 py-4 font-mono text-mono text-on-background">#TX-904219</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">+44 20 7123 4567</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-secondary/10 text-secondary border border-secondary/20">DELIVERED</span>
+</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">12m ago</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-6 py-4 font-mono text-mono text-on-background">#TX-904218</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">+1 (555) 098-7654</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-[18px]">sms</span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-error/10 text-error border border-error/20">FAILED</span>
+</td>
+<td class="px-6 py-4 font-label text-label text-on-surface-variant">25m ago</td>
+</tr>
+<!-- Skeleton Loader Placeholder -->
+<tr>
+<td class="px-6 py-4"><div class="h-4 w-24 shimmer rounded"></div></td>
+<td class="px-6 py-4"><div class="h-4 w-32 shimmer rounded"></div></td>
+<td class="px-6 py-4"><div class="h-4 w-8 shimmer rounded"></div></td>
+<td class="px-6 py-4"><div class="h-4 w-16 shimmer rounded"></div></td>
+<td class="px-6 py-4"><div class="h-4 w-12 shimmer rounded"></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Quick Actions Sidebar -->
+<div class="space-y-6">
+<div class="glass-card rounded-xl p-6 border border-outline-variant/20">
+<h3 class="font-h3 text-h3 text-on-background mb-6">Quick Actions</h3>
+<div class="space-y-4">
+<button class="w-full flex items-center justify-between p-4 bg-surface-container-low border border-outline-variant hover:border-primary/50 transition-all rounded-lg group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">send</span>
+</div>
+<div class="text-left">
+<div class="font-label text-label font-bold text-on-background">Send Message</div>
+<div class="text-[11px] text-on-surface-variant">Single transactional dispatch</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary translate-x-0 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 bg-surface-container-low border border-outline-variant hover:border-secondary/50 transition-all rounded-lg group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="text-left">
+<div class="font-label text-label font-bold text-on-background">Create Template</div>
+<div class="text-[11px] text-on-surface-variant">Save recurring content types</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary translate-x-0 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 bg-surface-container-low border border-outline-variant hover:border-on-surface transition-all rounded-lg group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div class="text-left">
+<div class="font-label text-label font-bold text-on-background">Documentation</div>
+<div class="text-[11px] text-on-surface-variant">Explore API &amp; Integrations</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface translate-x-0 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Secondary Support Card -->
+<div class="bg-primary/5 rounded-xl p-6 border border-primary/20 relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-label text-label font-bold text-primary mb-2">Need a higher limit?</h4>
+<p class="text-body-sm text-on-surface-variant mb-4">You've reached 85% of your tier capacity. Upgrade now for priority routing.</p>
+<button class="text-primary font-label text-label font-bold hover:underline flex items-center gap-1">
+                            Contact Sales <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-[120px] text-primary/5 rotate-12 transition-transform group-hover:scale-110">rocket_launch</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Tooltip Mockup Script -->
+<script>
+        // Simple interactivity for the dashboard
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = '';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+            });
+        });
+
+        // Skeleton loader timeout simulation
+        setTimeout(() => {
+            const skeletons = document.querySelectorAll('.shimmer');
+            skeletons.forEach(s => {
+                s.parentElement.innerHTML = '<span class="font-label text-label text-on-surface-variant">...waiting for sync</span>';
+            });
+        }, 5000);
+    </script>
+</body></html>

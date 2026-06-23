@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relay | Bulk Messaging</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            background-color: #131315;
+            color: #e5e1e4;
+            overflow-x: hidden;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-card {
+            background: rgba(32, 31, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(70, 69, 84, 0.5);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#131315",
+                        "on-primary-fixed": "#07006c",
+                        "on-primary-container": "#0d0096",
+                        "tertiary-container": "#d97721",
+                        "on-background": "#e5e1e4",
+                        "primary": "#c0c1ff",
+                        "secondary": "#89ceff",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#353437",
+                        "outline-variant": "#464554",
+                        "tertiary-fixed": "#ffdcc5",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary-fixed-dim": "#89ceff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "tertiary": "#ffb783",
+                        "surface-bright": "#39393b",
+                        "surface-tint": "#c0c1ff",
+                        "on-surface": "#e5e1e4",
+                        "on-tertiary": "#4f2500",
+                        "inverse-surface": "#e5e1e4",
+                        "secondary-fixed": "#c9e6ff",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-secondary": "#00344d",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-primary": "#1000a9",
+                        "primary-container": "#8083ff",
+                        "surface-container-high": "#2a2a2c",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#494bd6",
+                        "surface-container-low": "#1c1b1d",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container": "#201f22",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface": "#131315",
+                        "inverse-on-surface": "#313032",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-dim": "#131315",
+                        "on-secondary-container": "#00344e",
+                        "secondary-container": "#00a2e6",
+                        "outline": "#908fa0",
+                        "on-tertiary-container": "#452000",
+                        "surface-container-highest": "#353437",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-secondary-fixed-variant": "#004c6e"
+                    },
+                    "fontFamily": {
+                        "label": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "h1": ["Geist"],
+                        "h2": ["Geist"],
+                        "h3": ["Geist"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body-lg text-on-background bg-background">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-full w-60 border-r border-outline-variant bg-background flex flex-col py-8 z-50">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<h1 class="font-h2 text-[18px] font-bold text-on-background leading-tight">Relay</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-medium">Premium Messaging</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<!-- Sidebar Items mapping -->
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label text-label">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined text-[20px]">send</span>
+<span class="font-label text-label">Send Message</span>
+</a>
+<!-- Active State: Bulk Messaging -->
+<a class="flex items-center gap-3 px-3 py-2 rounded bg-surface-container-highest text-primary font-bold border-r-2 border-primary" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">message</span>
+<span class="font-label text-label">Bulk Messaging</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label text-label">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-label text-label">History</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="font-label text-label">Providers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined text-[20px]">vpn_key</span>
+<span class="font-label text-label">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label text-label">Settings</span>
+</a>
+</nav>
+<div class="px-3 mt-auto pt-4 border-t border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-2.5 px-4 rounded-lg font-label text-label font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Broadcast
+            </button>
+<div class="mt-4 flex items-center gap-3 px-3 py-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[24px]">account_circle</span>
+<span class="font-label text-label">User Profile</span>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-outline-variant bg-background flex justify-between items-center px-8 z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-1.5 font-label text-label text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="Search broadcasts, templates, or files..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant ml-2 cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A clean, professional headshot of a high-tech software engineer in a modern office environment. The lighting is moody and dramatic with subtle blue rim lighting, fitting the dark mode aesthetic of the workspace. High resolution and detailed facial features." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9gJbx2AI99IK2N6bLz5uXRd7N4JtTx0yGVlpIxRWkVNfNiBvasOd7pBHk0vJU7CyRW_EFq_T0Y6SunIi0SlJ6RTX7cFL-w9Zo-B-Mv_NtfEw7uoOtgPpoZisydHryze7UxaIUiY33tYCzYVPkQTfvGIsFbC9PqzNfvLfYzd_djVTgu-8QrKY3R_JlE2zyp7Zkg4dz3s4T6Yvut7h92l7MtVJF5Kqh9HsrmEaZ2ty-HoCk7DWMkGloHWqD6YZcsnsSo3Obh5af9gd3"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-60 pt-24 px-8 pb-12 max-w-[1440px]">
+<!-- Page Header -->
+<div class="mb-8">
+<h2 class="font-h1 text-h1 text-on-background mb-2">Bulk Messaging</h2>
+<p class="text-on-surface-variant font-body-sm">Upload your distribution list to broadcast messages to thousands of recipients simultaneously.</p>
+</div>
+<div class="grid grid-cols-1 gap-8">
+<!-- Upload Area Section -->
+<section class="relative group" id="upload-section">
+<div class="w-full min-h-[320px] flex flex-col items-center justify-center border-2 border-dashed border-outline-variant rounded-xl bg-surface-container-lowest hover:border-primary transition-all duration-300 cursor-pointer p-8 relative overflow-hidden">
+<!-- Subtle background decoration -->
+<div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+
+</div>
+<div class="z-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-primary text-[32px]">upload_file</span>
+</div>
+<h3 class="font-h3 text-h3 mb-2">Drop your mailing list here</h3>
+<p class="text-on-surface-variant text-body-sm max-w-sm mb-6">
+                            Support for .CSV, .XLSX, and .TXT formats. Make sure your file contains headers in the first row.
+                        </p>
+<button class="px-6 py-2.5 bg-surface-container-highest border border-outline-variant rounded-lg font-label text-label font-bold hover:bg-surface-bright transition-colors" onclick="simulateUpload()">
+                            Browse Files
+                        </button>
+</div>
+</div>
+</section>
+<!-- Preview State (Hidden by default, shown on upload) -->
+<section class="hidden space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700" id="preview-section">
+<!-- Analysis Bar -->
+<div class="flex items-center gap-6 p-4 glass-card rounded-xl">
+<div class="flex-1 flex items-center gap-12 px-4">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider">Total Records</span>
+<span class="font-mono text-h3 text-on-background">12,482</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider">Invalid Records</span>
+<span class="font-mono text-h3 text-error">14</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider">Estimated Cost</span>
+<span class="font-mono text-h3 text-secondary">$84.22</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider">Est. Time</span>
+<span class="font-mono text-h3 text-on-background">~ 4 min</span>
+</div>
+</div>
+<div class="h-10 w-[1px] bg-outline-variant"></div>
+<div class="flex gap-3 px-4">
+<button class="px-5 py-2 border border-outline-variant rounded-lg font-label text-label font-bold hover:bg-surface-container-high active:scale-95 transition-all">
+                            Validate Data
+                        </button>
+<button class="px-5 py-2 bg-primary text-on-primary rounded-lg font-label text-label font-bold shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all">
+                            Start Broadcast
+                        </button>
+</div>
+</div>
+<!-- Modern Table & Mapping -->
+<div class="glass-card rounded-xl overflow-hidden border border-outline-variant">
+<div class="overflow-x-auto hide-scrollbar">
+<table class="w-full border-collapse">
+<thead class="bg-surface-container">
+<tr>
+<!-- Mapping Dropdowns -->
+<th class="p-4 border-b border-outline-variant text-left">
+<div class="flex flex-col gap-2">
+<span class="font-mono text-[11px] text-on-surface-variant">CSV: csv_id</span>
+<select class="bg-surface-container-low border border-outline-variant text-label font-label p-1 rounded focus:ring-1 focus:ring-primary outline-none text-on-surface">
+<option>Ignore</option>
+<option selected="">External ID</option>
+</select>
+</div>
+</th>
+<th class="p-4 border-b border-outline-variant text-left">
+<div class="flex flex-col gap-2">
+<span class="font-mono text-[11px] text-on-surface-variant">CSV: full_name</span>
+<select class="bg-surface-container-low border border-outline-variant text-label font-label p-1 rounded focus:ring-1 focus:ring-primary outline-none text-on-surface">
+<option selected="">Recipient Name</option>
+<option>Note</option>
+</select>
+</div>
+</th>
+<th class="p-4 border-b border-outline-variant text-left">
+<div class="flex flex-col gap-2">
+<span class="font-mono text-[11px] text-on-surface-variant">CSV: contact_no</span>
+<select class="bg-surface-container-low border border-outline-variant text-label font-label p-1 rounded focus:ring-1 focus:ring-primary outline-none text-on-surface">
+<option selected="">Phone Number</option>
+<option>Alt. Phone</option>
+</select>
+</div>
+</th>
+<th class="p-4 border-b border-outline-variant text-left">
+<div class="flex flex-col gap-2">
+<span class="font-mono text-[11px] text-on-surface-variant">CSV: email_addr</span>
+<select class="bg-surface-container-low border border-outline-variant text-label font-label p-1 rounded focus:ring-1 focus:ring-primary outline-none text-on-surface">
+<option selected="">Recipient Email</option>
+<option>Sender CC</option>
+</select>
+</div>
+</th>
+<th class="p-4 border-b border-outline-variant text-left">
+<div class="flex flex-col gap-2">
+<span class="font-mono text-[11px] text-on-surface-variant">CSV: custom_tag</span>
+<select class="bg-surface-container-low border border-outline-variant text-label font-label p-1 rounded focus:ring-1 focus:ring-primary outline-none text-on-surface">
+<option>Ignore</option>
+<option selected="">Tag/Category</option>
+</select>
+</div>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 font-mono text-body-sm text-on-surface-variant">USR_0982</td>
+<td class="p-4 text-body-sm">Alex Rivers</td>
+<td class="p-4 text-body-sm font-mono">+1 (555) 012-3456</td>
+<td class="p-4 text-body-sm">alex.r@enterprise.com</td>
+<td class="p-4 text-body-sm text-on-surface-variant">Premium</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 font-mono text-body-sm text-on-surface-variant">USR_0983</td>
+<td class="p-4 text-body-sm">Sarah Jenkins</td>
+<td class="p-4 text-body-sm font-mono bg-error-container/20 text-error rounded px-2">99-X-INVALID</td>
+<td class="p-4 text-body-sm">sjenkins@web.site</td>
+<td class="p-4 text-body-sm text-on-surface-variant">Trial</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 font-mono text-body-sm text-on-surface-variant">USR_0984</td>
+<td class="p-4 text-body-sm">Marcus Thorne</td>
+<td class="p-4 text-body-sm font-mono">+44 20 7946 0123</td>
+<td class="p-4 text-body-sm">marcus.t@cloud.io</td>
+<td class="p-4 text-body-sm text-on-surface-variant">Partner</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 font-mono text-body-sm text-on-surface-variant">USR_0985</td>
+<td class="p-4 text-body-sm">Elena Rodriguez</td>
+<td class="p-4 text-body-sm font-mono">+1 (555) 987-6543</td>
+<td class="p-4 text-body-sm bg-error-container/20 text-error rounded px-2">elena.rod.missing@</td>
+<td class="p-4 text-body-sm text-on-surface-variant">Standard</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-4 font-mono text-body-sm text-on-surface-variant">USR_0986</td>
+<td class="p-4 text-body-sm">Jordan Smith</td>
+<td class="p-4 text-body-sm font-mono">+1 (555) 444-2211</td>
+<td class="p-4 text-body-sm">j.smith@relay.com</td>
+<td class="p-4 text-body-sm text-on-surface-variant">Admin</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-container/50 border-t border-outline-variant text-center">
+<button class="text-primary font-label text-label hover:underline">View all 12,482 rows</button>
+</div>
+</div>
+<!-- Settings & Schedule Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="glass-card p-6 rounded-xl space-y-4">
+<h4 class="font-h3 text-[18px]">Broadcast Settings</h4>
+<div class="space-y-3">
+<label class="block">
+<span class="text-label font-label text-on-surface-variant mb-1 block">Sender Identity</span>
+<select class="w-full bg-surface-container border border-outline-variant rounded-lg p-2 text-on-surface outline-none focus:ring-1 focus:ring-primary">
+<option>Relay Default (+1 234 567)</option>
+<option>Marketing Pool (Shortcode: 99882)</option>
+<option>Priority Service (Verified)</option>
+</select>
+</label>
+<label class="block">
+<span class="text-label font-label text-on-surface-variant mb-1 block">Throughput Rate</span>
+<input class="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex justify-between text-[10px] text-on-surface-variant font-mono mt-1">
+<span>Eco (10 msg/s)</span>
+<span>Turbo (500 msg/s)</span>
+</div>
+</label>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl space-y-4">
+<h4 class="font-h3 text-[18px]">Scheduling</h4>
+<div class="flex items-center gap-4 p-3 bg-surface-container-low border border-outline-variant rounded-lg cursor-pointer hover:border-primary transition-colors group">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div class="flex-1">
+<p class="text-label font-bold text-on-surface">Send Immediately</p>
+<p class="text-[11px] text-on-surface-variant">Messages will be queued for instant delivery</p>
+</div>
+<div class="w-4 h-4 rounded-full border-4 border-primary bg-background"></div>
+</div>
+<div class="flex items-center gap-4 p-3 border border-outline-variant rounded-lg cursor-pointer hover:border-primary transition-colors group">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div class="flex-1">
+<p class="text-label font-bold text-on-surface">Schedule for later</p>
+<p class="text-[11px] text-on-surface-variant">Pick a specific date and time for release</p>
+</div>
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant bg-transparent"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        function simulateUpload() {
+            const uploadSection = document.getElementById('upload-section');
+            const previewSection = document.getElementById('preview-section');
+            
+            // Add loading effect
+            uploadSection.classList.add('opacity-50', 'pointer-events-none');
+            const button = uploadSection.querySelector('button');
+            const originalText = button.innerText;
+            button.innerText = 'Analyzing List...';
+
+            setTimeout(() => {
+                uploadSection.classList.add('hidden');
+                previewSection.classList.remove('hidden');
+                
+                // Trigger an entry animation for the cards
+                const cards = previewSection.querySelectorAll('.glass-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(10px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.5s ease-out';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 1200);
+        }
+
+        // Add a drag-over effect
+        const dropZone = document.getElementById('upload-section');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-primary', 'bg-surface-container-high');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-primary', 'bg-surface-container-high');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            simulateUpload();
+        });
+    </script>
+</body></html>

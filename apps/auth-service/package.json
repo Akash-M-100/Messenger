@@ -21,6 +21,7 @@
     "clean": "tsc -b --clean"
   },
   "dependencies": {
+    "@fastify/static": "^9.1.3",
     "@ums/core": "workspace:*",
     "@ums/db": "workspace:*",
     "@ums/queue": "workspace:*",

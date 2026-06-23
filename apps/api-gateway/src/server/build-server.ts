@@ -1,7 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
-
 import type { DbClient } from "@ums/db";
 import type { RedisInstance } from "@ums/core";
+import cors from "@fastify/cors";
 
 import { registerCorrelationIdMiddleware } from "../middleware/correlation-id.js";
 import { registerErrorHandler } from "../middleware/error-handler.js";
@@ -27,12 +27,24 @@ export interface BuildServerOptions {
 export async function buildServer(
   options: BuildServerOptions,
 ): Promise<FastifyInstance> {
-  const server = Fastify({
-    logger: options.config.logger,
-  });
+ const server = Fastify({
+  logger: options.config.logger,
+});
 
-  registerErrorHandler(server);
-  registerCorrelationIdMiddleware(server);
+await server.register(cors, {
+  origin: [
+    "http://localhost:3003",
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-API-Key",
+  ],
+});
+
+registerErrorHandler(server);
+registerCorrelationIdMiddleware(server);
 
   // Execute services plugin directly without creating a scope
   await registerServicesPlugin(server, {

@@ -22,6 +22,7 @@
     "test:integration": "vitest run src/tests/integration"
   },
   "dependencies": {
+    "@fastify/cors": "^11.2.0",
     "@ums/core": "workspace:*",
     "@ums/db": "workspace:*",
     "@ums/queue": "workspace:*",

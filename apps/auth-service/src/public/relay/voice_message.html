@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relay | Voice Call Composer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed-variant": "#703700",
+                    "inverse-on-surface": "#313032",
+                    "on-secondary-fixed-variant": "#004c6e",
+                    "primary-fixed": "#e1e0ff",
+                    "on-primary-container": "#0d0096",
+                    "surface-tint": "#c0c1ff",
+                    "on-surface": "#e5e1e4",
+                    "inverse-primary": "#494bd6",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "on-background": "#e5e1e4",
+                    "tertiary-fixed": "#ffdcc5",
+                    "on-primary-fixed": "#07006c",
+                    "on-error": "#690005",
+                    "surface": "#131315",
+                    "secondary-container": "#00a2e6",
+                    "primary": "#c0c1ff",
+                    "surface-container-low": "#1c1b1d",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#89ceff",
+                    "tertiary-fixed-dim": "#ffb783",
+                    "on-secondary": "#00344d",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-container": "#452000",
+                    "on-secondary-fixed": "#001e2f",
+                    "surface-container-high": "#2a2a2c",
+                    "secondary": "#89ceff",
+                    "on-tertiary-fixed": "#301400",
+                    "surface-container-highest": "#353437",
+                    "tertiary-container": "#d97721",
+                    "surface-bright": "#39393b",
+                    "on-tertiary": "#4f2500",
+                    "outline": "#908fa0",
+                    "background": "#131315",
+                    "outline-variant": "#464554",
+                    "on-secondary-container": "#00344e",
+                    "surface-dim": "#131315",
+                    "error-container": "#93000a",
+                    "on-surface-variant": "#c7c4d7",
+                    "secondary-fixed": "#c9e6ff",
+                    "inverse-surface": "#e5e1e4",
+                    "tertiary": "#ffb783",
+                    "surface-container-lowest": "#0e0e10",
+                    "surface-container": "#201f22",
+                    "surface-variant": "#353437",
+                    "on-primary": "#1000a9",
+                    "primary-container": "#8083ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "32": "2rem",
+                    "16": "1rem",
+                    "8": "0.5rem",
+                    "24": "1.5rem",
+                    "64": "4rem",
+                    "4": "0.25rem",
+                    "48": "3rem"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label": ["Geist"],
+                    "h3": ["Geist"],
+                    "h1": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "mono": ["JetBrains Mono"],
+                    "h2": ["Geist"],
+                    "h1-mobile": ["Geist"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "h1-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-channel {
+            box-shadow: 0 0 0 2px theme('colors.primary');
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: theme('colors.surface-container-lowest');
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: theme('colors.outline-variant');
+            border-radius: 10px;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px theme('colors.primary');
+        }
+        .glass-panel {
+            background: rgba(32, 31, 34, 0.6);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-lg overflow-hidden">
+<!-- Shared SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-60 border-r border-outline-variant bg-background flex flex-col py-8 z-50">
+<div class="px-24 mb-32 flex items-center gap-12">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">send</span>
+</div>
+<div>
+<h2 class="font-h2 text-[18px] font-bold text-on-background">Relay</h2>
+<p class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">Premium Messaging</p>
+</div>
+</div>
+<div class="flex-1 px-8 space-y-4 overflow-y-auto custom-scrollbar">
+<nav class="space-y-4">
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label text-label">Dashboard</span>
+</a>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg bg-surface-container-highest text-primary font-bold border-r-2 border-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">send</span>
+<span class="font-label text-label">Send Message</span>
+</a>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">message</span>
+<span class="font-label text-label">Bulk Messaging</span>
+</a>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label text-label">Templates</span>
+</a>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-label text-label">History</span>
+</a>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="font-label text-label">Providers</span>
+</a>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">vpn_key</span>
+<span class="font-label text-label">API Keys</span>
+</a>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label text-label">Settings</span>
+</a>
+</nav>
+</div>
+<div class="px-8 mt-auto border-t border-outline-variant pt-16">
+<button class="w-full bg-primary text-on-primary font-bold py-8 rounded-lg flex items-center justify-center gap-8 mb-16 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="font-label text-label">New Broadcast</span>
+</button>
+<a class="flex items-center gap-12 px-16 py-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+<span class="font-label text-label">User Profile</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-outline-variant bg-background flex justify-between items-center px-32 z-40">
+<div class="flex items-center gap-16">
+<div class="flex items-center gap-8 text-on-surface-variant font-label text-[12px]">
+<span class="hover:text-on-surface cursor-pointer">Campaigns</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Send Message</span>
+</div>
+</div>
+<div class="flex-1 max-w-md px-32">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-12 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-6 pl-40 pr-12 font-body-sm text-on-surface focus:ring-2 focus:ring-primary" placeholder="Search templates, history..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-24">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-label">
+                JD
+            </div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-60 pt-16 h-screen flex flex-col">
+<div class="flex-1 overflow-y-auto p-32 custom-scrollbar">
+<div class="max-w-[1200px] mx-auto space-y-32 pb-64">
+<!-- Page Header -->
+<div class="flex flex-col gap-4">
+<h1 class="font-h1 text-h1 text-on-background">Send Message</h1>
+<p class="text-on-surface-variant text-body-sm max-w-2xl">Configure and launch your voice messaging campaign. Reach thousands of recipients with high-fidelity text-to-speech or custom recordings.</p>
+</div>
+<!-- Channel Selection -->
+<div class="grid grid-cols-4 gap-16">
+<button class="flex items-center gap-12 p-16 rounded-lg border border-outline-variant bg-surface-container-low hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant group-hover:text-on-surface">mail</span>
+<div class="text-left">
+<p class="font-label text-label text-on-surface font-semibold">Email</p>
+<p class="font-label text-[10px] text-on-surface-variant">Transactional &amp; Newsletter</p>
+</div>
+</button>
+<button class="flex items-center gap-12 p-16 rounded-lg border border-outline-variant bg-surface-container-low hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant group-hover:text-on-surface">sms</span>
+<div class="text-left">
+<p class="font-label text-label text-on-surface font-semibold">SMS</p>
+<p class="font-label text-[10px] text-on-surface-variant">Global short messaging</p>
+</div>
+</button>
+<button class="flex items-center gap-12 p-16 rounded-lg border border-outline-variant bg-surface-container-low hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-[24px] text-on-surface-variant group-hover:text-on-surface">chat</span>
+<div class="text-left">
+<p class="font-label text-label text-on-surface font-semibold">WhatsApp</p>
+<p class="font-label text-[10px] text-on-surface-variant">Rich media &amp; interactive</p>
+</div>
+</button>
+<button class="flex items-center gap-12 p-16 rounded-lg border-2 border-primary bg-primary-container/10 transition-all">
+<span class="material-symbols-outlined text-[24px] text-primary" style="font-variation-settings: 'FILL' 1;">record_voice_over</span>
+<div class="text-left">
+<p class="font-label text-label text-primary font-bold">Voice</p>
+<p class="font-label text-[10px] text-primary-fixed-dim">Automated voice calls</p>
+</div>
+</button>
+</div>
+<div class="grid grid-cols-12 gap-24">
+<!-- Form Section (Left Column) -->
+<div class="col-span-12 lg:col-span-7 space-y-24">
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-24 space-y-24">
+<!-- Recipient -->
+<div class="space-y-8">
+<label class="font-label text-label text-on-surface-variant uppercase tracking-wider">Recipient Phone Number</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-12 top-1/2 -translate-y-1/2 text-on-surface-variant">call</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-12 pl-40 pr-12 font-mono text-on-surface" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+</div>
+<!-- Input Method Toggle -->
+<div class="space-y-16">
+<label class="font-label text-label text-on-surface-variant uppercase tracking-wider">Content Method</label>
+<div class="flex p-4 bg-surface-container-lowest rounded-lg border border-outline-variant w-fit">
+<button class="px-24 py-8 rounded font-label text-label transition-all bg-surface-container-highest text-primary font-bold shadow-sm" id="tts-btn" onclick="switchTab('tts')">Text-to-Speech</button>
+<button class="px-24 py-8 rounded font-label text-label transition-all text-on-surface-variant hover:text-on-surface" id="upload-btn" onclick="switchTab('upload')">Audio Upload</button>
+</div>
+</div>
+<!-- TTS Content -->
+<div class="space-y-24" id="tts-content">
+<div class="space-y-8">
+<label class="font-label text-label text-on-surface-variant uppercase tracking-wider">Voice Script</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-16 font-body-sm text-on-surface resize-none" placeholder="Type your message here. Use {name} for personalization tags..." rows="6"></textarea>
+<div class="flex justify-end">
+<span class="text-[10px] font-mono text-on-surface-variant">0 / 2000 characters</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-16">
+<div class="space-y-8">
+<label class="font-label text-label text-on-surface-variant uppercase tracking-wider">Voice Selection</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-10 px-12 font-body-sm text-on-surface appearance-none">
+<option>Alloy - Neutral English (US)</option>
+<option>Echo - Warm English (UK)</option>
+<option>Shimmer - Bright Female (US)</option>
+<option>Fable - Storyteller Male (AU)</option>
+</select>
+</div>
+<div class="space-y-8">
+<label class="font-label text-label text-on-surface-variant uppercase tracking-wider">Language</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-10 px-12 font-body-sm text-on-surface appearance-none">
+<option>English (United States)</option>
+<option>Spanish (Mexico)</option>
+<option>French (France)</option>
+<option>German (Germany)</option>
+</select>
+</div>
+</div>
+<div class="space-y-16">
+<label class="font-label text-label text-on-surface-variant uppercase tracking-wider">Voice Controls</label>
+<div class="grid grid-cols-2 gap-24">
+<div class="space-y-8">
+<div class="flex justify-between">
+<span class="text-[11px] text-on-surface-variant">Speed</span>
+<span class="text-[11px] text-primary font-mono">1.0x</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+</div>
+<div class="space-y-8">
+<div class="flex justify-between">
+<span class="text-[11px] text-on-surface-variant">Pitch</span>
+<span class="text-[11px] text-primary font-mono">0.0</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Upload Content (Hidden by default) -->
+<div class="hidden space-y-16" id="upload-content">
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-48 flex flex-col items-center justify-center gap-16 bg-surface-container-lowest/50 hover:bg-surface-container-lowest transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-primary">cloud_upload</span>
+</div>
+<div class="text-center">
+<p class="font-label text-label text-on-surface font-semibold">Drop your audio file here</p>
+<p class="font-label text-[10px] text-on-surface-variant mt-4">Supports MP3, WAV up to 10MB</p>
+</div>
+<button class="bg-surface-container-high text-on-surface px-16 py-8 rounded-lg font-label text-label hover:bg-surface-container-highest transition-colors">Browse Files</button>
+</div>
+</div>
+</div>
+<!-- Call Options -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-24">
+<h3 class="font-label text-label text-on-surface-variant uppercase tracking-wider mb-20">Call Settings</h3>
+<div class="grid grid-cols-2 gap-24">
+<div class="flex items-center justify-between p-12 bg-surface-container-lowest border border-outline-variant rounded-lg">
+<div class="flex flex-col">
+<span class="font-label text-label text-on-surface font-semibold">Record Call</span>
+<span class="text-[10px] text-on-surface-variant">Saves MP3 recording</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-12 bg-surface-container-lowest border border-outline-variant rounded-lg">
+<div class="flex flex-col">
+<span class="font-label text-label text-on-surface font-semibold">Detection</span>
+<span class="text-[10px] text-on-surface-variant">Answering Machine</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Preview & Summary (Right Column) -->
+<div class="col-span-12 lg:col-span-5 space-y-24">
+<!-- Preview Card -->
+<div class="bg-surface-container border border-outline-variant rounded-lg overflow-hidden sticky top-32">
+<div class="p-24 border-b border-outline-variant bg-surface-container-high/50">
+<h3 class="font-label text-label text-on-surface-variant uppercase tracking-wider">Audio Preview</h3>
+</div>
+<div class="p-32 flex flex-col items-center gap-24 relative overflow-hidden">
+<!-- Waveform Visualization (Simulated) -->
+<div class="w-full h-32 flex items-center justify-center gap-2">
+<div class="w-1 h-8 bg-primary/40 rounded-full animate-pulse"></div>
+<div class="w-1 h-12 bg-primary/50 rounded-full animate-pulse [animation-delay:0.1s]"></div>
+<div class="w-1 h-20 bg-primary/60 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+<div class="w-1 h-24 bg-primary rounded-full animate-pulse [animation-delay:0.3s]"></div>
+<div class="w-1 h-16 bg-primary/80 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+<div class="w-1 h-28 bg-primary rounded-full animate-pulse [animation-delay:0.5s]"></div>
+<div class="w-1 h-20 bg-primary/70 rounded-full animate-pulse [animation-delay:0.6s]"></div>
+<div class="w-1 h-12 bg-primary/50 rounded-full animate-pulse [animation-delay:0.7s]"></div>
+<div class="w-1 h-8 bg-primary/40 rounded-full animate-pulse [animation-delay:0.8s]"></div>
+<div class="w-1 h-20 bg-primary/60 rounded-full animate-pulse [animation-delay:0.9s]"></div>
+<div class="w-1 h-24 bg-primary rounded-full animate-pulse [animation-delay:1.0s]"></div>
+<div class="w-1 h-16 bg-primary/80 rounded-full animate-pulse [animation-delay:1.1s]"></div>
+<div class="w-1 h-28 bg-primary rounded-full animate-pulse [animation-delay:1.2s]"></div>
+<div class="w-1 h-20 bg-primary/70 rounded-full animate-pulse [animation-delay:1.3s]"></div>
+<div class="w-1 h-12 bg-primary/50 rounded-full animate-pulse [animation-delay:1.4s]"></div>
+<div class="w-1 h-8 bg-primary/40 rounded-full animate-pulse [animation-delay:1.5s]"></div>
+</div>
+<div class="flex items-center gap-16">
+<button class="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">replay_10</span>
+</button>
+<button class="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">forward_10</span>
+</button>
+</div>
+<div class="w-full space-y-8">
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-1/3 bg-primary"></div>
+</div>
+<div class="flex justify-between font-mono text-[10px] text-on-surface-variant">
+<span>00:12</span>
+<span>00:45</span>
+</div>
+</div>
+</div>
+<!-- Summary Details -->
+<div class="p-24 bg-surface-container-lowest/30 border-t border-outline-variant space-y-16">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant">Provider</span>
+<span class="text-on-surface font-semibold">Twilio Voice (USA-1)</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant">Estimated Duration</span>
+<span class="text-on-surface font-semibold">~45 seconds</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant">Cost per Call</span>
+<span class="text-secondary font-bold">$0.024</span>
+</div>
+<div class="mt-24 pt-24 border-t border-outline-variant">
+<div class="flex gap-12 p-12 rounded bg-primary/5 border border-primary/20">
+<span class="material-symbols-outlined text-primary text-[20px]">info</span>
+<p class="text-[11px] text-primary-fixed-dim leading-relaxed">Personalization tags will be processed at runtime. Preview uses default placeholder values.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions Bar -->
+<footer class="h-20 border-t border-outline-variant bg-surface-container px-32 flex items-center justify-between z-40">
+<div class="flex items-center gap-16">
+<span class="flex h-3 w-3 rounded-full bg-secondary-container"></span>
+<span class="font-label text-label text-on-surface-variant">Campaign: <span class="text-on-surface font-bold">New Voice Broadcast #842</span></span>
+</div>
+<div class="flex items-center gap-16">
+<button class="px-24 py-10 rounded-lg border border-outline-variant font-label text-label text-on-surface hover:bg-surface-container-highest transition-colors flex items-center gap-8">
+<span class="material-symbols-outlined text-[18px]">phone_callback</span>
+                    Test Call
+                </button>
+<button class="px-32 py-10 rounded-lg bg-primary text-on-primary font-bold font-label text-label hover:opacity-90 transition-all flex items-center gap-8 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+                    Start Voice Campaign
+                </button>
+</div>
+</footer>
+</main>
+<script>
+        function switchTab(tab) {
+            const ttsBtn = document.getElementById('tts-btn');
+            const uploadBtn = document.getElementById('upload-btn');
+            const ttsContent = document.getElementById('tts-content');
+            const uploadContent = document.getElementById('upload-content');
+
+            if (tab === 'tts') {
+                ttsBtn.classList.add('bg-surface-container-highest', 'text-primary', 'font-bold', 'shadow-sm');
+                ttsBtn.classList.remove('text-on-surface-variant');
+                uploadBtn.classList.remove('bg-surface-container-highest', 'text-primary', 'font-bold', 'shadow-sm');
+                uploadBtn.classList.add('text-on-surface-variant');
+                ttsContent.classList.remove('hidden');
+                uploadContent.classList.add('hidden');
+            } else {
+                uploadBtn.classList.add('bg-surface-container-highest', 'text-primary', 'font-bold', 'shadow-sm');
+                uploadBtn.classList.remove('text-on-surface-variant');
+                ttsBtn.classList.remove('bg-surface-container-highest', 'text-primary', 'font-bold', 'shadow-sm');
+                ttsBtn.classList.add('text-on-surface-variant');
+                uploadContent.classList.remove('hidden');
+                ttsContent.classList.add('hidden');
+            }
+        }
+    </script>
+</body></html>

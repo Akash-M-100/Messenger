@@ -1,4 +1,5 @@
 import Fastify, { type FastifyInstance } from "fastify";
+import fastifyStatic from "@fastify/static";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -37,9 +38,14 @@ export async function buildServer(
   server.decorate("redis", options.redis);
   server.decorate("config", options.config);
 
-  // Serve HTML file at root
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
+
+  await server.register(fastifyStatic, {
+  root: join(process.cwd(), "src", "public"),
+  prefix: "/",
+});
+
   const htmlPath = join(__dirname, "..", "public", "index.html");
 
   server.get("/", async (_request, reply) => {
