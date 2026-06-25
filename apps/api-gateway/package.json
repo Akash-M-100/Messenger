@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && node scripts/copy-public.mjs",
     "start": "node --env-file=../../.env dist/index.js",
     "typecheck": "tsc -b --pretty false",
     "dev": "pnpm build && pnpm start",

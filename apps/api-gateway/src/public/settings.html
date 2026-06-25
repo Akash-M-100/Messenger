@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relay | Settings</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #111113;
+        --panel: #18181c;
+        --panel-2: #202024;
+        --panel-3: #35353a;
+        --border: #383842;
+        --text: #f0edf2;
+        --muted: #aaa7b6;
+        --primary: #b9baff;
+        --primary-text: #120d78;
+        --danger: #ffb4ab;
+        --success: #8ee6a8;
+        --shadow: 0 18px 45px rgb(0 0 0 / 0.18);
+      }
+
+      html[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f7f7fb;
+        --panel: #fff;
+        --panel-2: #f0f0f6;
+        --panel-3: #e2e2eb;
+        --border: #d3d2dd;
+        --text: #202024;
+        --muted: #676573;
+        --primary: #5658d9;
+        --primary-text: #fff;
+        --danger: #b3261e;
+        --success: #166b34;
+        --shadow: 0 18px 45px rgb(30 30 60 / 0.08);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+      a { color: inherit; text-decoration: none; }
+
+      .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 240px;
+        padding: 28px 20px;
+        border-right: 1px solid var(--border);
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+      }
+      .brand { display: flex; align-items: center; gap: 12px; margin: 0 10px 30px; }
+      .brand-mark {
+        width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+        background: var(--primary); color: var(--primary-text); font-weight: 900;
+      }
+      .brand h2 { margin: 0; font-size: 23px; }
+      .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; letter-spacing: .04em; }
+      .nav { display: grid; gap: 5px; }
+      .nav a {
+        display: flex; align-items: center; gap: 12px; padding: 11px 13px;
+        border-radius: 9px; color: var(--muted); font-size: 14px;
+      }
+      .nav a:hover, .nav a.active { color: var(--text); background: var(--panel-3); }
+      .nav a.active { color: var(--primary); }
+      .nav-icon { width: 24px; text-align: center; font-size: 17px; }
+      .sidebar-bottom { margin-top: auto; }
+      .broadcast {
+        width: 100%; border: 0; border-radius: 10px; padding: 14px;
+        background: var(--primary); color: var(--primary-text); font-weight: 750;
+      }
+      .user-link { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+      .topbar {
+        position: fixed; inset: 0 0 auto 240px; height: 64px; padding: 0 34px;
+        border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 92%, transparent);
+        backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: space-between; z-index: 9;
+      }
+      .search {
+        width: min(560px, 58vw); border: 1px solid var(--border); background: var(--panel);
+        color: var(--text); border-radius: 9px; padding: 10px 14px;
+      }
+      .top-actions { display: flex; gap: 12px; }
+      .icon-button {
+        width: 38px; height: 38px; border: 0; border-radius: 50%;
+        background: transparent; color: var(--muted); font-size: 18px;
+      }
+      .icon-button:hover { background: var(--panel-2); color: var(--text); }
+
+      main { margin-left: 240px; padding: 112px 34px 64px; }
+      .page { max-width: 1080px; margin: auto; }
+      h1 { margin: 0; font-size: clamp(28px, 4vw, 36px); letter-spacing: -.04em; }
+      .intro { color: var(--muted); margin: 7px 0 34px; }
+      .settings-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start; }
+      .tabs { display: grid; gap: 8px; position: sticky; top: 92px; }
+      .tab {
+        border: 0; border-radius: 9px; padding: 15px 16px; text-align: left;
+        background: transparent; color: var(--muted); display: flex; gap: 12px; align-items: center;
+      }
+      .tab:hover, .tab.active { background: var(--panel-3); color: var(--text); }
+      .tab.active { color: var(--primary); font-weight: 700; }
+      .panel-stack { display: grid; gap: 22px; }
+      .panel { display: none; }
+      .panel.active { display: grid; gap: 22px; animation: fade .18s ease-out; }
+      @keyframes fade { from { opacity: 0; transform: translateY(4px); } }
+      .card {
+        background: color-mix(in srgb, var(--panel) 93%, transparent); border: 1px solid var(--border);
+        border-radius: 14px; padding: 26px; box-shadow: var(--shadow);
+      }
+      .card h2 { margin: 0 0 5px; font-size: 21px; }
+      .card .description { margin: 0 0 26px; color: var(--muted); font-size: 14px; }
+      .danger { color: var(--danger); }
+      .avatar-row { display: flex; align-items: center; gap: 18px; margin-bottom: 26px; }
+      .avatar {
+        width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+        background: linear-gradient(145deg, var(--primary), #6265db); color: #111; font-weight: 900;
+        border: 2px solid var(--border); overflow: hidden;
+      }
+      .secondary-button, .primary-button {
+        border: 1px solid var(--border); border-radius: 9px; padding: 11px 16px; font-weight: 700;
+      }
+      .secondary-button { background: var(--panel-3); color: var(--text); }
+      .primary-button { background: var(--primary); color: var(--primary-text); border-color: transparent; }
+      .hint { color: var(--muted); font-size: 11px; margin: 7px 0 0; }
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+      .field { display: grid; gap: 8px; }
+      label {
+        color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+      }
+      input[type="text"], input[type="email"], input[type="password"] {
+        width: 100%; min-height: 50px; border: 1px solid var(--border); border-radius: 9px;
+        background: var(--panel-2); color: var(--text); padding: 12px 14px; outline: none;
+      }
+      input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent); }
+      .actions { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+      .password-fields { display: grid; gap: 18px; max-width: 520px; }
+      .member { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-top: 1px solid var(--border); }
+      .member-info { display: flex; align-items: center; gap: 12px; }
+      .member-badge { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--panel-3); font-weight: 800; }
+      .member p { margin: 0; }
+      .member small { color: var(--muted); }
+      .status { color: var(--success); font-size: 12px; font-weight: 800; }
+      .theme-options { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      .theme-option {
+        border: 2px solid var(--border); border-radius: 12px; padding: 16px; background: var(--panel-2);
+      }
+      .theme-option.selected { border-color: var(--primary); }
+      .theme-preview { height: 105px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border); }
+      .theme-preview.light { background: linear-gradient(90deg, #efeff5 30%, #fff 30%); }
+      .theme-preview.dark { background: linear-gradient(90deg, #111113 30%, #222226 30%); }
+      .toggle-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px 0; border-top: 1px solid var(--border); }
+      .toggle-row:first-of-type { border-top: 0; }
+      .toggle-row p { margin: 0; }
+      .toggle-row small { color: var(--muted); }
+      .switch { position: relative; width: 46px; height: 26px; flex: 0 0 auto; }
+      .switch input { opacity: 0; width: 0; height: 0; }
+      .slider { position: absolute; inset: 0; border-radius: 20px; background: var(--panel-3); transition: .2s; }
+      .slider::before {
+        content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px;
+        border-radius: 50%; background: white; transition: .2s;
+      }
+      .switch input:checked + .slider { background: var(--primary); }
+      .switch input:checked + .slider::before { transform: translateX(20px); }
+      .toast {
+        position: fixed; right: 24px; bottom: 24px; padding: 13px 18px; border-radius: 10px;
+        background: var(--primary); color: var(--primary-text); font-weight: 750;
+        opacity: 0; transform: translateY(16px); pointer-events: none; transition: .22s; z-index: 20;
+      }
+      .toast.show { opacity: 1; transform: none; }
+      .mobile-menu { display: none; }
+
+      @media (max-width: 820px) {
+        .sidebar { transform: translateX(-100%); transition: .2s; }
+        body.menu-open .sidebar { transform: none; box-shadow: var(--shadow); }
+        .topbar { left: 0; padding: 0 18px; }
+        .mobile-menu { display: block; }
+        .search { width: min(440px, 55vw); }
+        main { margin-left: 0; padding: 96px 18px 48px; }
+        .settings-grid { grid-template-columns: 1fr; }
+        .tabs { position: static; grid-template-columns: repeat(4, minmax(120px, 1fr)); overflow-x: auto; padding-bottom: 4px; }
+      }
+      @media (max-width: 560px) {
+        .top-actions .hide-mobile { display: none; }
+        .form-grid, .theme-options { grid-template-columns: 1fr; }
+        .card { padding: 20px; }
+        .tab { padding: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand">
+        <div class="brand-mark">R</div>
+        <div><h2>Relay</h2><p>Premium Messaging</p></div>
+      </div>
+      <nav class="nav">
+        <a href="#"><span class="nav-icon">▦</span>Dashboard</a>
+        <a href="#"><span class="nav-icon">➤</span>Send Message</a>
+        <a href="#"><span class="nav-icon">▤</span>Bulk Messaging</a>
+        <a href="#"><span class="nav-icon">▧</span>Templates</a>
+        <a href="#"><span class="nav-icon">↶</span>History</a>
+        <a href="#"><span class="nav-icon">⌘</span>Providers</a>
+        <a href="#"><span class="nav-icon">⚿</span>API Keys</a>
+        <a class="active" href="/settings"><span class="nav-icon">⚙</span>Settings</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="broadcast" type="button" data-toast="Broadcast composer will be added with the messaging page.">⊕ &nbsp; New Broadcast</button>
+        <div class="nav user-link"><a href="#" data-tab-link="profile"><span class="nav-icon">◉</span>User Profile</a></div>
+      </div>
+    </aside>
+
+    <header class="topbar">
+      <button class="icon-button mobile-menu" type="button" id="menu-button" aria-label="Open menu">☰</button>
+      <input class="search" id="settings-search" type="search" placeholder="Search settings..." aria-label="Search settings" />
+      <div class="top-actions">
+        <button class="icon-button hide-mobile" type="button" data-tab-link="notifications" aria-label="Notifications">♢</button>
+        <button class="icon-button hide-mobile" type="button" data-toast="Relay settings help">?</button>
+        <button class="icon-button" type="button" data-tab-link="profile" aria-label="Profile">●</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="page">
+        <h1>Settings</h1>
+        <p class="intro">Manage your personal account, organization, and platform preferences.</p>
+        <div class="settings-grid">
+          <nav class="tabs" aria-label="Settings sections">
+            <button class="tab active" type="button" data-tab="profile"><span>♙</span>Profile</button>
+            <button class="tab" type="button" data-tab="organization"><span>▥</span>Organization</button>
+            <button class="tab" type="button" data-tab="theme"><span>◉</span>Theme</button>
+            <button class="tab" type="button" data-tab="notifications"><span>♢</span>Notifications</button>
+          </nav>
+
+          <div class="panel-stack">
+            <section class="panel active" id="profile-panel">
+              <form class="card" id="profile-form">
+                <h2>Profile Information</h2>
+                <p class="description">Update your account's profile information and email address.</p>
+                <div class="avatar-row">
+                  <div class="avatar" id="avatar">AW</div>
+                  <div>
+                    <button class="secondary-button" id="avatar-button" type="button">Change Avatar</button>
+                    <input id="avatar-input" type="file" accept="image/png,image/jpeg,image/gif" hidden />
+                    <p class="hint">JPG, GIF or PNG. Max size of 800K</p>
+                  </div>
+                </div>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="full-name">Full Name</label>
+                    <input id="full-name" type="text" value="Alexander Wright" required />
+                  </div>
+                  <div class="field">
+                    <label for="email">Email Address</label>
+                    <input id="email" type="email" value="alexander.wright@relay-corp.io" required />
+                  </div>
+                </div>
+                <div class="actions"><button class="primary-button" type="submit">Save Changes</button></div>
+              </form>
+
+              <form class="card" id="password-form">
+                <h2 class="danger">Security</h2>
+                <p class="description">Manage your password and security credentials.</p>
+                <div class="password-fields">
+                  <div class="field">
+                    <label for="current-password">Current Password</label>
+                    <input id="current-password" type="password" autocomplete="current-password" required />
+                  </div>
+                  <div class="field">
+                    <label for="new-password">New Password</label>
+                    <input id="new-password" type="password" minlength="8" autocomplete="new-password" required />
+                  </div>
+                </div>
+                <div class="actions"><button class="secondary-button" type="submit">Update Password</button></div>
+              </form>
+            </section>
+
+            <section class="panel" id="organization-panel">
+              <form class="card" id="organization-form">
+                <h2>Organization Details</h2>
+                <p class="description">Control your company branding and identifiers.</p>
+                <div class="field">
+                  <label for="workspace-name">Workspace Name</label>
+                  <input id="workspace-name" type="text" value="Relay Premium Dev" required />
+                </div>
+                <div class="actions"><button class="primary-button" type="submit">Save Organization</button></div>
+              </form>
+              <div class="card">
+                <h2>Team Members</h2>
+                <p class="description">Collaborators with access to this workspace.</p>
+                <div class="member">
+                  <div class="member-info"><div class="member-badge">AW</div><div><p>Alexander Wright</p><small>alex@relay.io · Owner</small></div></div>
+                  <span class="status">ACTIVE</span>
+                </div>
+                <div class="member">
+                  <div class="member-info"><div class="member-badge">SM</div><div><p>Sarah Miller</p><small>sarah.m@relay.io · Admin</small></div></div>
+                  <span class="status">ACTIVE</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel" id="theme-panel">
+              <div class="card">
+                <h2>Visual Preferences</h2>
+                <p class="description">Customize the appearance of the interface.</p>
+                <div class="theme-options">
+                  <button class="theme-option" type="button" data-theme-choice="light">
+                    <div class="theme-preview light"></div>Light Mode
+                  </button>
+                  <button class="theme-option selected" type="button" data-theme-choice="dark">
+                    <div class="theme-preview dark"></div>Dark Mode
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel" id="notifications-panel">
+              <div class="card">
+                <h2>Notification Settings</h2>
+                <p class="description">Select when and how you'd like to be notified.</p>
+                <div class="toggle-row">
+                  <div><p>Email Alerts</p><small>Receive weekly reports and critical security updates.</small></div>
+                  <label class="switch"><input type="checkbox" data-pref="emailAlerts" checked /><span class="slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div><p>SMS Notifications</p><small>Get real-time alerts for failed broadcast delivery.</small></div>
+                  <label class="switch"><input type="checkbox" data-pref="smsAlerts" /><span class="slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div><p>System Push</p><small>Native browser notifications for in-app events.</small></div>
+                  <label class="switch"><input type="checkbox" data-pref="systemPush" checked /><span class="slider"></span></label>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const storageKey = "relay-settings";
+      const state = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      const toast = document.querySelector("#toast");
+      let toastTimer;
+
+      function saveState(update) {
+        Object.assign(state, update);
+        localStorage.setItem(storageKey, JSON.stringify(state));
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+      }
+
+      function openTab(name) {
+        document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === name));
+        document.querySelectorAll(".panel").forEach((panel) => panel.classList.toggle("active", panel.id === `${name}-panel`));
+        document.body.classList.remove("menu-open");
+      }
+
+      document.querySelectorAll("[data-tab]").forEach((tab) => tab.addEventListener("click", () => openTab(tab.dataset.tab)));
+      document.querySelectorAll("[data-tab-link]").forEach((link) => link.addEventListener("click", (event) => {
+        event.preventDefault();
+        openTab(link.dataset.tabLink);
+      }));
+      document.querySelectorAll("[data-toast]").forEach((button) => button.addEventListener("click", () => showToast(button.dataset.toast)));
+
+      document.querySelector("#menu-button").addEventListener("click", () => document.body.classList.toggle("menu-open"));
+      document.querySelector("#settings-search").addEventListener("input", (event) => {
+        const query = event.target.value.toLowerCase();
+        const match = ["profile", "organization", "theme", "notifications"].find((name) => name.includes(query));
+        if (query && match) openTab(match);
+      });
+
+      const fullName = document.querySelector("#full-name");
+      const email = document.querySelector("#email");
+      const workspaceName = document.querySelector("#workspace-name");
+      fullName.value = state.fullName || fullName.value;
+      email.value = state.email || email.value;
+      workspaceName.value = state.workspaceName || workspaceName.value;
+
+      document.querySelector("#profile-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        saveState({ fullName: fullName.value.trim(), email: email.value.trim() });
+        const initials = fullName.value.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+        if (!document.querySelector("#avatar img")) document.querySelector("#avatar").textContent = initials || "R";
+        showToast("Profile changes saved");
+      });
+
+      document.querySelector("#password-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const password = document.querySelector("#new-password");
+        if (password.value.length < 8) return showToast("Use at least 8 characters");
+        event.target.reset();
+        showToast("Password updated");
+      });
+
+      document.querySelector("#organization-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        saveState({ workspaceName: workspaceName.value.trim() });
+        showToast("Organization saved");
+      });
+
+      document.querySelector("#avatar-button").addEventListener("click", () => document.querySelector("#avatar-input").click());
+      document.querySelector("#avatar-input").addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (file.size > 800000) return showToast("Avatar must be smaller than 800K");
+        const reader = new FileReader();
+        reader.onload = () => {
+          document.querySelector("#avatar").innerHTML = `<img src="${reader.result}" alt="Profile avatar" style="width:100%;height:100%;object-fit:cover">`;
+          showToast("Avatar updated");
+        };
+        reader.readAsDataURL(file);
+      });
+
+      const selectedTheme = state.theme || "dark";
+      document.documentElement.dataset.theme = selectedTheme;
+      document.querySelectorAll("[data-theme-choice]").forEach((choice) => {
+        choice.classList.toggle("selected", choice.dataset.themeChoice === selectedTheme);
+        choice.addEventListener("click", () => {
+          const theme = choice.dataset.themeChoice;
+          document.documentElement.dataset.theme = theme;
+          document.querySelectorAll("[data-theme-choice]").forEach((item) => item.classList.toggle("selected", item === choice));
+          saveState({ theme });
+          showToast(`${theme[0].toUpperCase() + theme.slice(1)} theme applied`);
+        });
+      });
+
+      document.querySelectorAll("[data-pref]").forEach((toggle) => {
+        if (typeof state[toggle.dataset.pref] === "boolean") toggle.checked = state[toggle.dataset.pref];
+        toggle.addEventListener("change", () => {
+          saveState({ [toggle.dataset.pref]: toggle.checked });
+          showToast("Notification preference saved");
+        });
+      });
+    </script>
+  </body>
+</html>
