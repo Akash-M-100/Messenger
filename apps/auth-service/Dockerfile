@@ -42,8 +42,8 @@ RUN pnpm install --frozen-lockfile --prod
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:${PORT:-3003}/health || exit 1
+    CMD wget --quiet --tries=1 --spider http://localhost:${AUTH_SERVICE_PORT:-3003}/health || exit 1
 
-EXPOSE ${PORT:-3003}
+EXPOSE ${AUTH_SERVICE_PORT:-3003}
 
 CMD ["node", "--env-file=../.env", "dist/index.js"]
