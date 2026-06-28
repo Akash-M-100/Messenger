@@ -253,7 +253,6 @@
   </div>
 
   <script>
-    alert("INDEX VERSION 2");
     function toggleForm(formType) {
       const signupForm = document.getElementById('signup-form');
       const loginForm = document.getElementById('login-form');
@@ -355,7 +354,6 @@ setTimeout(() => {
           throw new Error(data.message || 'Login failed');
         }
 
-       alert("MY NEW CODE IS RUNNING");
       console.log("LOGIN RESPONSE:", data);
 
 showMessage(
@@ -369,10 +367,7 @@ localStorage.setItem(
   JSON.stringify(data.data)
 );
 
-console.log("ABOUT TO REDIRECT");
-
 setTimeout(() => {
-  console.log("REDIRECT NOW");
   window.location.href = "/relay/dashboard.html";
 }, 1000);
       } catch (error) {

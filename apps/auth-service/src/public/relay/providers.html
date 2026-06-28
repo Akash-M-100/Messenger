@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relay | Providers</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #131315;
+            color: #e5e1e4;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(28, 27, 29, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(144, 143, 160, 0.1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#131315",
+                        "on-primary-fixed": "#07006c",
+                        "on-primary-container": "#0d0096",
+                        "tertiary-container": "#d97721",
+                        "on-background": "#e5e1e4",
+                        "primary": "#c0c1ff",
+                        "secondary": "#89ceff",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#353437",
+                        "outline-variant": "#464554",
+                        "tertiary-fixed": "#ffdcc5",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary-fixed-dim": "#89ceff",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "tertiary": "#ffb783",
+                        "surface-bright": "#39393b",
+                        "surface-tint": "#c0c1ff",
+                        "on-surface": "#e5e1e4",
+                        "on-tertiary": "#4f2500",
+                        "inverse-surface": "#e5e1e4",
+                        "secondary-fixed": "#c9e6ff",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-secondary": "#00344d",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-primary": "#1000a9",
+                        "primary-container": "#8083ff",
+                        "surface-container-high": "#2a2a2c",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#494bd6",
+                        "surface-container-low": "#1c1b1d",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container": "#201f22",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface": "#131315",
+                        "inverse-on-surface": "#313032",
+                        "on-tertiary-fixed": "#301400",
+                        "surface-dim": "#131315",
+                        "on-secondary-container": "#00344e",
+                        "secondary-container": "#00a2e6",
+                        "outline": "#908fa0",
+                        "on-tertiary-container": "#452000",
+                        "surface-container-highest": "#353437",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-secondary-fixed-variant": "#004c6e"
+                    },
+                    "fontFamily": {
+                        "label": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "h1": ["Geist"],
+                        "h2": ["Geist"],
+                        "h3": ["Geist"],
+                        "mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "label": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h3": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body-lg text-on-background bg-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-60 border-r border-outline-variant bg-background flex flex-col py-8 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<div>
+<h2 class="font-h2 text-h2 font-bold text-on-background leading-none">Relay</h2>
+<span class="font-label text-label text-on-surface-variant">Premium Messaging</span>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary-container text-on-primary-container py-2.5 rounded-lg font-label text-label font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] hover:bg-opacity-90">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Broadcast
+            </button>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="dashboard.html">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label text-label">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="send-message.html">
+<span class="material-symbols-outlined text-[20px]">send</span>
+<span class="font-label text-label">Send Message</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="bulk_messaging.html">
+<span class="material-symbols-outlined text-[20px]">message</span>
+<span class="font-label text-label">Bulk Messaging</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="templates.html">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label text-label">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="history.html">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-label text-label">History</span>
+</a>
+<!-- Active Navigation -->
+<a class="flex items-center gap-3 px-4 py-2 bg-surface-container-highest text-primary font-bold border-r-2 border-primary transition-colors duration-200 group" href="providers.html">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">hub</span>
+<span class="font-label text-label">Providers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="api-keys.html">
+<span class="material-symbols-outlined text-[20px]">vpn_key</span>
+<span class="font-label text-label">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 group" href="settings.html">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label text-label">Settings</span>
+</a>
+</nav>
+<div class="px-2 mt-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+<span class="font-label text-label">User Profile</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-outline-variant bg-background flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-1.5 pl-10 pr-4 text-body-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all placeholder:text-on-surface-variant/50" placeholder="Search providers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-60 pt-24 px-8 pb-12 min-h-screen">
+<section class="mb-10">
+<h1 class="font-h1 text-h1 text-on-background mb-2">Providers</h1>
+<p class="text-on-surface-variant max-w-lg">Manage the messaging providers connected to your workspace, by channel.</p>
+</section>
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-on-surface-variant">SMS</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-secondary/10 text-secondary border border-secondary/20">CONNECTED</span>
+</div>
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">sms</span>
+<div class="font-h3 text-h3">Twilio</div>
+</div>
+<p class="text-[12px] text-on-surface-variant">DLT-compliant SMS delivery for Indian and international numbers.</p>
+</div>
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-on-surface-variant">VOICE</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-secondary/10 text-secondary border border-secondary/20">CONNECTED</span>
+</div>
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">call</span>
+<div class="font-h3 text-h3">Twilio</div>
+</div>
+<p class="text-[12px] text-on-surface-variant">Outbound voice calls and text-to-speech announcements.</p>
+</div>
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-on-surface-variant">WHATSAPP</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-secondary/10 text-secondary border border-secondary/20">CONNECTED</span>
+</div>
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">chat</span>
+<div class="font-h3 text-h3">Twilio</div>
+</div>
+<p class="text-[12px] text-on-surface-variant">WhatsApp Business messaging with 24-hour session window enforcement.</p>
+</div>
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label text-label text-on-surface-variant">EMAIL</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-secondary/10 text-secondary border border-secondary/20">CONNECTED</span>
+</div>
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">mail</span>
+<div class="font-h3 text-h3">Resend</div>
+</div>
+<p class="text-[12px] text-on-surface-variant">Transactional and marketing email delivery.</p>
+</div>
+</section>
+<section class="glass-card rounded-xl p-6 border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-tertiary">construction</span>
+<h3 class="font-h3 text-h3 text-on-background">Provider configuration UI is coming soon</h3>
+</div>
+<p class="text-on-surface-variant text-[13px] max-w-2xl">This page currently shows a read-only summary of the providers configured for your tenant. Adding/removing provider integrations, rotating credentials, and setting routing priority will be wired up to the Admin API in a future update.</p>
+</section>
+</main>
+</body></html>

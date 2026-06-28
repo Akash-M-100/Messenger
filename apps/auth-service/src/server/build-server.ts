@@ -40,13 +40,14 @@ export async function buildServer(
 
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
+  const publicDir = join(__dirname, "..", "public");
 
   await server.register(fastifyStatic, {
-  root: join(process.cwd(), "src", "public"),
-  prefix: "/",
-});
+    root: publicDir,
+    prefix: "/",
+  });
 
-  const htmlPath = join(__dirname, "..", "public", "index.html");
+  const htmlPath = join(publicDir, "index.html");
 
   server.get("/", async (_request, reply) => {
     try {
